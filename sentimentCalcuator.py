@@ -5,7 +5,7 @@ Created on Mon Nov 13 20:45:47 2017
 @author: Rachit & Nitesh
 """
 
-class tweetsSenti():
+class tweetsSenti:
      def searchTweets(self, q):
         
         return q + 'Nitesh'

@@ -8,7 +8,7 @@ Created on Mon Nov 13 20:45:47 2017
 from flask import render_template,url_for, flash, redirect, request
 from flask import Markup
 from main import app
-from sentimentCalculator import tweetsSenti
+from .sentimentCalculator import tweetsSenti
 # from markupsafe import Markup
 # index view function suppressed for brevity
 

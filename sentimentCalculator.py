@@ -13,5 +13,7 @@ class tweetsSenti:
 
     def searchTweets(self, q):
         from twitter import Twitter,  OAuth, TwitterHTTPError
+        import pandas as pd
+        from pandas.io.json import json_normalize
         
         return q + 'Nitesh'

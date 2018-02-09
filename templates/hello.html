@@ -85,30 +85,6 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	font-family: "Segoe UI",Arial,sans-serif;
 }
 </style>
-<script>
-function openPlot(evt, plot) {
-    // Declare all variables
-    var i, tabcontent, tablinks;
-
-    // Get all elements with class="tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-    }
-
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(plot).style.display = "block";
-    evt.currentTarget.className += " active";
-}
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-</script>
     </head>
     <body>
 	<div class="flex-container">
@@ -180,43 +156,8 @@ document.getElementById("defaultOpen").click();
 Developed by Nitesh Sharma & Rachit Pabreja
 <br>
 Contributors: Dr. Vijay Atluri & Ussama Yakub
-    <!-- D3.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <!-- Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <script type="text/javascript">
-        var scatter_graphs = {{scatterPlot | safe}};
-		var bar_graphs = {{barPlot | safe}}
-		var scatter_ids = {{scatter_ids | safe}};
-		var bar_ids = {{bar_ids | safe}};
-		var map_graphs = {{mapPlot | safe}}
-		var map_ids = {{map_ids | safe}}
-		var world_graphs = {{worldPlot | safe}}
-		var world_map_ids = {{world_map_ids | safe}}
-        for(var i in scatter_graphs) {
-            Plotly.plot(scatter_ids[i]+'_plot', // the ID of the div, created above
-                        scatter_graphs[i].data,
-                        scatter_graphs[i].layout || {});
-        }
-		for(var i in bar_graphs) {
-            Plotly.plot(bar_ids[i]+'_plot', // the ID of the div, created above
-                        bar_graphs[i].data,
-                        bar_graphs[i].layout || {});
-        }
-		for(var i in map_graphs) {
-            Plotly.plot(map_ids[i]+'_plot', // the ID of the div, created above
-                        map_graphs[i].data,
-                        map_graphs[i].layout || {});
-        }
-		for(var i in map_graphs) {
-            Plotly.plot(world_map_ids[i]+'_plot', // the ID of the div, created above
-                        world_graphs[i].data,
-                        world_graphs[i].layout || {});
-        }
-    </script>
+
 </footer>
 	</div>			
     </body>

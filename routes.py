@@ -1,6 +1,6 @@
 #Contains all the routes or pages or views
 from flask import Flask,url_for,request,render_template
-from app import app
+from main import app
 
 #server
 @app.route('/')

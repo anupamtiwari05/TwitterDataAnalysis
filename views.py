@@ -18,7 +18,7 @@ def hello():
         return render_template('hello.html')
     elif request.method=='POST':
         twitterHandle = request.form['twitterhandle']
-        #classobj = tweets_senti()
-       # string1 = classobj.search_tweets(twitterHandle)
+        classobj = tweets_senti()
+        string1 = classobj.search_tweets(twitterHandle)
         
-        return twitterHandle
+        return twitterHandle + string1

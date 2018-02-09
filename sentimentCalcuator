@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Nov 13 20:45:47 2017
+
+@author: Rachit & Nitesh
+"""
+
+class tweets_senti():
+     def search_tweets(self, q):
+        import pandas as pd
+        from twitter import Twitter 
+        from twitter import OAuth 
+        from pandas.io.json import json_normalize
+        from twitter import TwitterHTTPError
+        
+        return q + 'Nitesh'

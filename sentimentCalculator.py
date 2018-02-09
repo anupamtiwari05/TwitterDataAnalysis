@@ -25,7 +25,7 @@ class tweetsSenti:
         #q = 'modi'
         count = 100
         
-      #  search_results = twitter.search.tweets(q=q,count = count)
+        search_results = twitter.search.tweets(q=q,count = count)
      
 
         return 'Success'

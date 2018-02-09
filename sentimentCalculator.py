@@ -24,7 +24,7 @@ class tweetsSenti:
         twitterObj = Twitter(auth=oauth)
         # q = '#modi'
         count = 100
-         try:
+        try:
             search_results = twitterObj.search.tweets(q=q,count = count)
         except TwitterHTTPError:
             return 'twitter server error'

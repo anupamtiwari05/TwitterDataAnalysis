@@ -5,4 +5,4 @@ from main import app
 #server
 @app.route('/')
 def hello():
-    return render_template('try.html')
+    return render_template('hello.html')

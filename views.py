@@ -21,4 +21,4 @@ def hello():
         obj=tweetsSenti()
         string1 = obj.searchTweets(twitterHandle)
   
-        return twitterHandle 
+        return string1 

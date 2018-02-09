@@ -85,6 +85,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	font-family: "Segoe UI",Arial,sans-serif;
 }
 </style>
+
     </head>
     <body>
 	<div class="flex-container">
@@ -119,24 +120,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
   </div>
 </div>
 <br>
-<br>
-{% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                        <li>{{ message[1] }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        <form action="" method="post">
-            {{ form.csrf }}
- 
-            <div class="text">
-                {{ form.name.label }} {{ form.name }}
-            
-			
-            
+<br>        
             Number of Tweets:
             
             <select>
@@ -148,7 +132,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
             <div class="input submit">
                 <input type="submit" value="Query" class="submitButton"/>
             </div>
-        </form>
+       
 		
 		<br>
 		<br>
@@ -157,9 +141,8 @@ Developed by Nitesh Sharma & Rachit Pabreja
 <br>
 Contributors: Dr. Vijay Atluri & Ussama Yakub
 
-
 </footer>
-	</div>			
+			
     </body>
 
 </html>

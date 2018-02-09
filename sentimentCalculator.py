@@ -13,7 +13,7 @@ class tweetsSenti:
     def searchTweets(self, q):
         from pandas import pandas as pd
         from twitter import Twitter, OAuth, TwitterHTTPError
-        from pandas.io.json import json_normalize
+       # from pandas.io.json import json_normalize
         
         ACCESS_TOKEN = '136600388-9iihe7SFq8nZUOL5GjxoZlPbxW2MYcScWlZ6sD3a'
         ACCESS_SECRET = 'ScmAR4iYHCxuPHhYMifirTK0h2Jhdqt1p10uoz9lHTshT'
@@ -26,10 +26,10 @@ class tweetsSenti:
         count = 100
         
         search_results = twitterObj.search.tweets(q=q,count = count)
-        Original_status_df = json_normalize(search_results,['statuses'])
-        Original_status_df = pd.DataFrame(Original_status_df)
-        min_id = min(Original_status_df['id'])
-        max_id = max(Original_status_df['id'])
+       # Original_status_df = json_normalize(search_results,['statuses'])
+       # Original_status_df = pd.DataFrame(Original_status_df)
+       # min_id = min(Original_status_df['id'])
+       # max_id = max(Original_status_df['id'])
      
 
         return 'Success' 

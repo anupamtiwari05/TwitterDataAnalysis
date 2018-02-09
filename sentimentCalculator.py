@@ -21,7 +21,7 @@ class tweetsSenti:
         consumer_secret = '5zr7Xr9y4AbKgUCuWRmQGaMvizwg48HpVeyjbSZC4j350rIYPF'
     
         oauth = OAuth(ACCESS_TOKEN, ACCESS_SECRET, consumer_key, consumer_secret)
-        twitter = Twitter(auth=oauth)
+        twitterObj = Twitter(auth=oauth)
         # q = '#modi'
         count = 100
         

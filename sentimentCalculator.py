@@ -22,7 +22,7 @@ class tweetsSenti:
     
         oauth = OAuth(ACCESS_TOKEN, ACCESS_SECRET, consumer_key, consumer_secret)
         twitter = Twitter(auth=oauth)
-        q = '#modi'
+        # q = '#modi'
         count = 100
         
         search_results = twitterObj.search.tweets(q=q,count = count)
@@ -32,4 +32,4 @@ class tweetsSenti:
         max_id = max(Original_status_df['id'])
      
 
-        return 'Success' + str(max_id)
+        return 'Success' 

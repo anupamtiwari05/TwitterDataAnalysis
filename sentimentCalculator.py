@@ -24,12 +24,15 @@ class tweetsSenti:
         twitterObj = Twitter(auth=oauth)
         # q = '#modi'
         count = 100
-        
-        search_results = twitterObj.search.tweets(q=q,count = count)
-       # Original_status_df = json_normalize(search_results,['statuses'])
-       # Original_status_df = pd.DataFrame(Original_status_df)
-       # min_id = min(Original_status_df['id'])
-       # max_id = max(Original_status_df['id'])
+         try:
+            search_results = twitterObj.search.tweets(q=q,count = count)
+        except TwitterHTTPError:
+            return 'twitter server error'
+       
+        Original_status_df = json_normalize(search_results,['statuses'])
+        Original_status_df = pd.DataFrame(Original_status_df)
+        min_id = min(Original_status_df['id'])
+        max_id = max(Original_status_df['id'])
      
 
         return 'Success' 

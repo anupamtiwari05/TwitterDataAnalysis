@@ -31,7 +31,7 @@ class tweetsSenti:
         Original_status_df = json_normalize(search_results,['statuses'])
         Original_status_df = pd.DataFrame(Original_status_df)
        # min_id = min(Original_status_df['id'])
-       # max_id = max(Original_status_df['id'])
+       # max_id = max(Original_status_df['id']) 
 
         return 'Success' 
    

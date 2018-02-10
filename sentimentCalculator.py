@@ -11,8 +11,7 @@ class tweetsSenti:
         return super().__init__(**kwargs)
 
     def searchTweets(self, q):
-        import pandas as pd
-        import numpy as np
+        
         from twitter import Twitter, OAuth, TwitterHTTPError
        # from pandas.io.json import json_normalize
         
@@ -29,8 +28,8 @@ class tweetsSenti:
             search_results = twitterObj.search.tweets(q=q,count = count)
         except TwitterHTTPError:
             return 'twitter server error'
-    #    Original_status_df = json_normalize(search_results,['statuses'])
-       # Original_status_df = pd.DataFrame(Original_status_df)
+        Original_status_df = json_normalize(search_results,['statuses'])
+        Original_status_df = pd.DataFrame(Original_status_df)
        # min_id = min(Original_status_df['id'])
        # max_id = max(Original_status_df['id'])
 

@@ -1,6 +1,7 @@
 Flask==0.12.1
 twitter==1.18.0
 pandas==0.17.1
+numpy==1.13.3
 jsonschema==2.6.0
 
 

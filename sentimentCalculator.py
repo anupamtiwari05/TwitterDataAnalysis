@@ -11,7 +11,7 @@ class tweetsSenti:
         return super().__init__(**kwargs)
 
     def searchTweets(self, q):
-        from pandas import pandas as pd
+       
         from twitter import Twitter, OAuth, TwitterHTTPError
        # from pandas.io.json import json_normalize
         

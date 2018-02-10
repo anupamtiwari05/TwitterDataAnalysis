@@ -1,9 +1,9 @@
 from flask import Flask
-from pandas import pandas
+
 app = Flask(__name__)
 
 # Make the WSGI interface available at the top level so wfastcgi can get it.
-wsgi_app = app.wsgi_app
+wsgi_app = app.wsgi_app process-group=myapp application-group=%{GLOBAL}
 
 from views import *
 

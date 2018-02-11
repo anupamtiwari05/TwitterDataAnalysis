@@ -16,7 +16,6 @@ class tweetsSenti:
         import re
         from twitter import Twitter, OAuth, TwitterHTTPError
         from pandas.io.json import json_normalize
-        from textblob import TextBlob 
         
         ACCESS_TOKEN = '136600388-9iihe7SFq8nZUOL5GjxoZlPbxW2MYcScWlZ6sD3a'
         ACCESS_SECRET = 'ScmAR4iYHCxuPHhYMifirTK0h2Jhdqt1p10uoz9lHTshT'
@@ -59,7 +58,37 @@ class tweetsSenti:
                     'South Africa','Switzerland','Sweden',
                     'Turkey','Peru','Puerto Rico','Russia','Singapore','Chile','United Kingdom','Indonesia','Philippines',
                     'Ukraine','UK','Venezuela','Yemen']
+
         Cleansed_Country_df = Country_of_tweet(cleansed_tweets_df,countries)
+
+        us_city_state_filter =['Albuquerque','Asheville','Atlanta','Austin','Baltimore','Boston','Columbia','Dallas','Detroit','Denver',
+                       'Las Vegas','Georgia','Miami','Honolulu','Los Angeles','Pensacola','Richmond','Kansas',
+                       'Pheonix City','Washington, DC','NYC',
+                       'San Jose','Seattle','Orlando','Pittsburgh','San Diego','Chicago',    
+                       'New York','Phoenix','Mount Prospect',
+                       'Alabama','Alaska','Arkansas','Arizona',
+                       'California','Colorado','Connecticut','Delaware','Florida','Hawaii','Indiana','Iowa','Idaho','Illinois',
+                       'Indiana','Louisiana','Oregon',       
+                       'Maryland','Michigan','Minnesota','Maine','Massachusetts','Missouri','Mississippi','Montana',
+                       'Nebraska','New Jersey','New Hampshire','North Carolina','Kentucky','Ohio','Oklahoma',
+                       'New Mexico','Nevada','North Dakota','South Dakota','Pennsylvania','San Francisco',
+                       'Tennessee','Utah','Rhode Island','South Carolina','Washington','West Virginia','Wisconsin','Wyoming',
+                       'Texas','Vermont','Virginia','LA','SF',
+                       'AZ','AL','CA','CO','CT','DE','FL','GA','IA','ID','IL','IN','KY','MA',
+                       'MI','MO','MD','MT','MN','MS','NC','ND','NJ','NH','NY','NV',
+                       'OH','OR','PA','RI','SD','TX','TN','UT','VA','VT','WA','WI','WY','WV']
+        
+        US_States_df = US_State_of_User(Cleansed_Country_df,us_city_state_filter)
+        Updated_country_df = Updated_country_of_tweet(US_States_df,'USA')
+
+        only_country_df =   Updated_country_df[Updated_country_df['Country_User']!=''].reset_index(drop=True)
+        tweet_df_live_sentiments_df = calculate_sentiment(only_country_df)
+
+        country_tweets_count  = countryTweetsCount(tweet_df_live_sentiments_df)
+        usa_tweets_count    = usaTweetsCount(country_tweets_count)
+
+        mean_sentiments_country_df = meanSentimentsCountry(usa_tweets_count)
+        mean_sentiments_UsState_df = meanSentimentsUsState(mean_sentiments_country_df)
 
         return 'Success'
 
@@ -118,4 +147,168 @@ def Country_of_tweet(dataframe,countries_filter):
             list3.append("")
         
     dataframe['Country_User'] = list3
+    return dataframe
+
+
+def US_State_of_User(dataframe,us_city_state):
+    import re
+    dummylist =[]
+    count = 0
+    city_to_state_names_updated = {'Albuquerque':'New Mexico',
+                                   'Atlanta':'Georgia',
+                                   'Austin':'Texas',
+                                   'Baltimore':'Maryland',
+                                   'Boston':'Massachusetts',
+                                   'Columbia':'South Carolina',
+                                   'Diego':'California',
+                                   'Denver':'Colorado',
+                                   'Detroit':'Michigan',
+                                   'Honolulu':'Hawaii',
+                                   'Las Vegas' : 'Nevada',
+                                   'Vegas':'Nevada',
+                                   'Indianapolis':'Indiana',
+                                   'Dallas': 'Texas',
+                                   'Seattle': 'Washington',
+                                   'NYC':'New York',
+                                   'Los Angeles' : 'California',
+                                   'Orlando': 'Florida',
+                                   'San Diego' : 'California',
+                                   'San Jose':'California',
+                                   'San Francisco':'California',
+                                   'LA':'California',
+                                   'SF':'California',
+                                   'Pittsburgh':'Pennsylvania',
+                                   'Pensacola':'Florida',
+                                   'Chicago':'Illinois','Phoenix':'Arizona','Pheonix City':'Albama','Richmond':'Virginia',
+                                   'Mount Prospect':'Illinois','Washington  DC':'Maryland','washington, DC':'Maryland',                             
+                                   'Miami':'Florida', 'Asheville':'North Carolina','Washington DC':'Maryland',
+                                   'AZ':'Arizona','AL':'Alabama','CA':'California','CT':'Connecticut','CO':'Colorado',
+                                   'DE':'Delaware','FL':'Florida','GA':'Georgia','ID':'Idaho','IA':'Iowa','IL':'Illinois',
+                                   'IN':'Indiana','KY':'Kentucky','MA':'Massachusetts','MD':'Maryland','MI':'Michigan',
+                                   'MN':'Minnesota','MS':'Mississippi','MT':'Montana','MO':'Missouri','NC':'North Carolina',
+                                   'ND':'North Dakota','NE':'Nebraska','NH':'New Hampshire','NY':'New York',
+                                   'NJ':'New Jersey','NV':'Nevada','OH':'Ohio','OR':'Oregon','PA':'Pennsylvania',
+                                   'RI':'Rhode Island','TX':'Texas','TN':'Tennessee','SD':'South Dakota','UT':'Utah',
+                                   'VA':'Virginia','VT':'Vermont','WA':'Washington','WI':'Wisconsin','WY':'Wyoming',
+                                   'WV':'West Virginia'}
+    
+    for i in range(len(dataframe)):
+        setblank =0
+        location_string =  dataframe.iloc[i,:]['Location_User']
+        if(isinstance(location_string,str)):
+            location_string_split= re.split(r'[,\s]', location_string)
+            for city_state in us_city_state:
+                if('New York' in city_state or 'Las Vegas' in city_state or 'Los Angeles' in city_state 
+                   or 'North Carolina' in city_state or 'San Francisco' in city_state or 'New Mexico' in city_state 
+                   or 'North Dakota' in city_state or 'South Dakota' in city_state or 'Rhode Island' in city_state 
+                   or 'Washington, DC' in city_state or 'New Jersey' in city_state or 'Washington DC' in city_state
+                   or 'Washington  DC' in city_state or 'New Hampshire' in city_state or 'West Virginia' in city_state):
+                    if(re.search(city_state,location_string) or re.search(city_state.lower(),location_string.lower()) 
+                       or re.search(city_state.upper(),location_string.upper())):
+                        state_updated = city_to_state_names_updated.get(city_state,city_state)
+                        dummylist.append(state_updated) 
+                        setblank = 1
+                        break
+                elif(city_state in location_string_split or city_state.lower() in location_string_split or city_state.upper() in location_string_split):
+                    state_updated = city_to_state_names_updated.get(city_state,city_state)
+                    dummylist.append(state_updated) 
+                    setblank = 1
+                    break
+                    
+            if(setblank == 0):
+                dummylist.append('')
+        else:
+            list3.append('')
+        
+    dataframe['USA_State_User'] = dummylist
+    
+    return dataframe
+
+def Updated_country_of_tweet(dataframe,country):
+    countrylist = []
+    for i in range(len(dataframe)):
+        if(dataframe.iloc[i,:]['USA_State_User']!=""):
+            countrylist.append(country)
+        else:
+            countrylist.append(dataframe.iloc[i,:]['Country_User'])
+                          
+    dataframe['Country_User'] = countrylist
+    return  dataframe 
+
+def calculate_sentiment(tweet_df):
+    from textblob import TextBlob
+    polarity = []
+    subjectivity = []
+    reputation = []
+    for i in range(len(tweet_df)):
+        wiki = TextBlob(tweet_df.iloc[i,:]['text'])
+        polarity.append(wiki.sentiment.polarity)
+        subjectivity.append(wiki.sentiment.subjectivity)
+        try:
+            reputation.append(int(tweet_df.iloc[i,:]['user']['followers_count'])/(int(tweet_df.iloc[i,:]['user']['followers_count'])
+            + int(tweet_df.iloc[i,:]['user']['friends_count'])))
+        except ValueError:
+            reputation.append(0)
+        except ZeroDivisionError:
+            reputation.append(0)
+    tweet_df['Polarity'] = polarity
+    tweet_df['Subjectivity']= subjectivity
+    tweet_df['Reputation'] = reputation
+    tweet_df['Reputation'] = round(tweet_df['Reputation'],1)
+    return tweet_df
+
+def countryTweetsCount(dataframe):
+    dataframe['Total_Tweets_Country']=int()
+    for country in dataframe.Country_User.unique():
+        dataframe.loc[dataframe.Country_User==country,'Total_Tweets_Country'] = (dataframe[dataframe.Country_User==country].count().values[3])
+
+    return dataframe
+
+def usaTweetsCount(dataframe):
+    import numpy as np
+    dataframe['Total_Tweets_USA_State']=int()
+    for state in dataframe.USA_State_User.unique():
+        if(state == ''):
+            dataframe.loc[dataframe.USA_State_User==state,'Total_Tweets_USA_State']= np.nan
+        else:
+            dataframe.loc[dataframe.USA_State_User==state,'Total_Tweets_USA_State'] = (dataframe[dataframe.USA_State_User==state].count().values[4])
+
+    return dataframe
+
+def meanSentimentsCountry(dataframe):
+    dataframe['Mean_Polarity_Country']=float()
+    dataframe['Mean_Subjectivity_Country']=float()
+    dataframe['Mean_Reputation_Country']=float()
+    dataframe['Weighted_Mean_Polarity_Country']=float()
+
+    for country in dataframe.Country_User.unique():
+        if(country == ''):
+            dataframe.loc[dataframe.Country_User==country,'Mean_Polarity_Country'] = ''
+            dataframe.loc[dataframe.Country_User==country,'Mean_Subjectivity_Country'] = ''
+            dataframe.loc[dataframe.Country_User==country,'Mean_Reputation_Country'] = ''
+        else:
+            dataframe.loc[dataframe.Country_User==country,'Mean_Polarity_Country'] =100 * dataframe[dataframe.Country_User==country].Polarity.mean()
+            dataframe.loc[dataframe.Country_User==country,'Weighted_Mean_Polarity_Country'] =(1000000 * dataframe[dataframe.Country_User==country].Polarity.mean() * dataframe[dataframe.Country_User==country].Total_Tweets_Country.mean())/dataframe['Total_Tweets_Country'].sum()     
+            dataframe.loc[dataframe.Country_User==country,'Mean_Subjectivity_Country'] =100 * dataframe[dataframe.Country_User==country].Subjectivity.mean()
+            dataframe.loc[dataframe.Country_User==country,'Mean_Reputation_Country'] =100 * dataframe[dataframe.Country_User==country].Reputation.mean()
+
+    return dataframe
+
+def meanSentimentsUsState(dataframe):
+    dataframe['Mean_Polarity_USA_State']=float()
+    dataframe['Mean_Subjectivity_USA_State']=float()
+    dataframe['Mean_Reputation_USA_State']=float()
+    dataframe['Weighted_Mean_Polarity_USA_State']=float()
+
+    for us_state in dataframe.USA_State_User.unique():
+        if(us_state == ''):
+            dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Polarity_USA_State'] = ''
+            dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Subjectivity_USA_State'] = ''
+            dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Reputation_USA_State'] = ''
+        else:
+            dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Polarity_USA_State'] =100 * dataframe[dataframe.USA_State_User==us_state].Polarity.mean()
+            dataframe.loc[dataframe.USA_State_User==us_state,'Weighted_Mean_Polarity_USA_State'] =(1000000 * dataframe[dataframe.USA_State_User==us_state].Polarity.mean() * dataframe[dataframe.USA_State_User==us_state].Total_Tweets_USA_State.mean())/dataframe['Total_Tweets_USA_State'].sum() 
+            dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Subjectivity_USA_State'] =100 * dataframe[dataframe.USA_State_User==us_state].Subjectivity.mean()
+            dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Reputation_USA_State'] =100 * dataframe[dataframe.USA_State_User==us_state].Reputation.mean()
+
     return dataframe

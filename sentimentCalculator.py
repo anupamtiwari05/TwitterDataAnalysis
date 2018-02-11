@@ -13,6 +13,7 @@ class tweetsSenti:
     def searchTweets(self, q):
         import numpy as np
         import pandas as pd
+        import re
         from twitter import Twitter, OAuth, TwitterHTTPError
         from pandas.io.json import json_normalize
         
@@ -33,6 +34,7 @@ class tweetsSenti:
         Original_status_df = pd.DataFrame(Original_status_df)
         min_id = min(Original_status_df['id'])
         max_id = max(Original_status_df['id']) 
-
+        
+        Cleansed_df = Original_status_df[['user','text']]
         return 'Success' 
    

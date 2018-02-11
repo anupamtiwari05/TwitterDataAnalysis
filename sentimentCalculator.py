@@ -16,6 +16,7 @@ class tweetsSenti:
         import re
         from twitter import Twitter, OAuth, TwitterHTTPError
         from pandas.io.json import json_normalize
+        from textblob import TextBlob
         
         ACCESS_TOKEN = '136600388-9iihe7SFq8nZUOL5GjxoZlPbxW2MYcScWlZ6sD3a'
         ACCESS_SECRET = 'ScmAR4iYHCxuPHhYMifirTK0h2Jhdqt1p10uoz9lHTshT'

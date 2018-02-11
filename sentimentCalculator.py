@@ -44,9 +44,21 @@ class tweetsSenti:
                 max_id = max(results['id'])
             except TwitterHTTPError:
                 return 'twitter server error'
+        
 
         Original_status_df = Original_status_df.reset_index()
-        cleaned_tweets_df = clean_Tweets(Original_status_df)
+        cleansed_tweets_df = clean_Tweets(Original_status_df)
+        countries = ['Argentina','Austria','Australia','Brasil','Brazil','Bangladesh','Cameroon','Canada','Cyprus',
+                    'Deutschland','Dubai','Ecuador','Egypt',
+                    'England','Kenya','Nigeria','Hong Kong','Holand','Finland','Prague','USA','Greece',
+                    'Kazakhstan','Thailand','Italy','Italia','India','Israel','Ireland','Pakistan','Polska','Poland',
+                    'United States','Germany','Spain','France','Fiji','China','Mexico','Netherlands',
+                    'New Zealand','North Korea','Japan','Jordan',
+                    'Oman','Palestine','United Arab Emirates','UAE','Portugal','Scotland','Slovakia',
+                    'South Africa','Switzerland','Sweden',
+                    'Turkey','Peru','Puerto Rico','Russia','Singapore','Chile','United Kingdom','Indonesia','Philippines',
+                    'Ukraine','UK','Venezuela','Yemen']
+        Cleansed_Country_df = Country_of_tweet(cleansed_tweets_df,countries)
 
         return 'Success'
 
@@ -74,4 +86,35 @@ def clean_Tweets(Original_status_df):
    
     return tweet_df
 
+
+def Country_of_tweet(dataframe,countries_filter):
+    import re
+    list3 =[]
+    country_names_updated = {'Prague' : 'Czechia','United States':'USA','United Arab Emirates':'UAE',
+                             'Deutschland':'Germany','UK':'United Kingdom','Italia':'Italy','Polska':'Poland',
+                             'Holand':'Netherlands','Brasil':'Brazil'}
+    for i in range(len(dataframe)):
+        setblank =0
+        location = dataframe.iloc[i,:]['Location_User']
+        if(isinstance(location,str)):
+            location_split = re.split(r'[-,.\s]',location)
+            for country in countries_filter:
+                if('United Arab Emirates' in country or 'United States' in country or 'United Kingdom' in country 
+                   or 'New Zealand' in country or 'North Korea' in country):
+                    if(re.search(country,location) or re.search(country.lower(),location.lower()) or re.search(country.upper(),location.upper())):
+                        country_updated = country_names_updated.get(country,country)
+                        list3.append(country_updated) 
+                        setblank = 1
+                        break 
+                elif(country in location_split or country.lower() in location_split or country.upper() in location_split):
+                    country_updated = country_names_updated.get(country,country)
+                    list3.append(country_updated)
+                    setblank = 1
+                    break
+            if(setblank == 0):
+                list3.append("")
+        else:
+            list3.append("")
         
+    dataframe['Country_User'] = list3
+    return dataframe

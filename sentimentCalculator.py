@@ -7,6 +7,7 @@ Created on Mon Nov 13 20:45:47 2017
 
 class tweetsSenti:
     import numpy as np
+    import pandas as pd
     def __init__(self, **kwargs):
         return super().__init__(**kwargs)
 

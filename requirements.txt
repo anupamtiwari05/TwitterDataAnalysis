@@ -3,5 +3,4 @@ twitter==1.18.0
 jsonschema==2.6.0
 --find-links wheelhouse
 pandas==0.20.3
---find-links wheelhouse
-numpy==1.14.0
+

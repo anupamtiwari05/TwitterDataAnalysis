@@ -20,5 +20,4 @@ def hello():
         twitterHandle = request.form['twitterhandle']
         obj=tweetsSenti()
         world_map_string, world_map_ids = obj.searchTweets(twitterHandle)
-        print("Yay")
-        return render_template('hello.html')
+        return render_template('hello.html', worldPlot = world_map_string, world_map_ids = world_map_ids)

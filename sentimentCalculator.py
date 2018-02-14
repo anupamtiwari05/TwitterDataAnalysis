@@ -79,9 +79,10 @@ class tweetsSenti:
                        'OH','OR','PA','RI','SD','TX','TN','UT','VA','VT','WA','WI','WY','WV']
         
         US_States_df = US_State_of_User(Cleansed_Country_df,us_city_state_filter)
-        Updated_country_df = Updated_country_of_tweet(US_States_df,'USA')
+        updated_country_df = Updated_country_of_tweet(US_States_df,'USA')
+        converted_country_df = ConvertCountryName(updated_country_df)
 
-        only_country_df =   Updated_country_df[Updated_country_df['Country_User']!=''].reset_index(drop=True)
+        only_country_df =   converted_country_df[converted_country_df['Country_User']!=''].reset_index(drop=True)
         tweet_df_live_sentiments_df = calculate_sentiment(only_country_df)
 
         country_tweets_count  = countryTweetsCount(tweet_df_live_sentiments_df)
@@ -246,6 +247,28 @@ def Updated_country_of_tweet(dataframe,country):
                           
     dataframe['Country_User'] = countrylist
     return  dataframe 
+
+def ConvertCountryName(dataframe):
+    import pycountry as pyc
+    world_dict = dict()
+    world_dict['']=''
+    world_dict['USA'] = 'USA'
+    world_dict['Dubai'] = 'UAE'
+    world_dict['Russia'] = 'RUS'
+    for countryValue in pyc.countries:
+        country_code = countryValue.alpha_3
+        country_name = countryValue.name
+        world_dict[country_name] = country_code
+    countryCodes =[]
+    for i in range(len(dataframe)):
+        try:
+            country = dataframe.iloc[i,:]['Country_User']
+            countryCodes.append(world_dict[country])
+        except KeyError:
+            countryCodes.append('')
+    
+    dataframe['Country_User'] = countryCodes
+    return dataframe
 
 def calculate_sentiment(tweet_df):
     from textblob import TextBlob

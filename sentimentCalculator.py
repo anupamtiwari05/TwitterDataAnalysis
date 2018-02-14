@@ -96,8 +96,8 @@ class tweetsSenti:
         UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
         UsState_map =  UsState_map_df.groupby('USA_State_User').mean()
        
-        world_map_string = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
-        return 'Success'
+        world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
+        return world_map_string, world_map_ids
 
 def clean_Tweets(Original_status_df):
     import re
@@ -365,5 +365,5 @@ def worldMap(polarity,country_code):
     #data =json.dumps(world_map_id)
     #cls=plotly.plotly.utils.PlotlyJSONEncoder
     world_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
-    #return cls, world_map_id
-    return 'success'
+    #Working till here
+    return world_map_json, world_map_id

@@ -364,4 +364,5 @@ def worldMap(polarity,country_code):
     world_map_id = ['World_Map']
     cls=plotly.utils.PlotlyJSONEncoder
     #world_map_json = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-    return cls, world_map_id
+    #return cls, world_map_id
+    return 'success','sucess2'

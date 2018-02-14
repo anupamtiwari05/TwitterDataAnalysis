@@ -96,7 +96,7 @@ class tweetsSenti:
         UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
         UsState_map =  UsState_map_df.groupby('USA_State_User').mean()
        
-        world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
+        world_map_string = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
         return 'Success'
 
 def clean_Tweets(Original_status_df):

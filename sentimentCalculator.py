@@ -324,7 +324,7 @@ def meanSentimentsUsState(dataframe):
     return dataframe
 
 def worldMap(polarity,country_code):
-    from plotly import plotly
+     import plotly
     #import json
 #==============================================================================
 #     scl = [[0.0, 'rgb(242,240,247)'],[0.2, 'rgb(218,218,235)'],[0.4, 'rgb(188,189,220)'],\
@@ -365,4 +365,4 @@ def worldMap(polarity,country_code):
     #cls=plotly.plotly.utils.PlotlyJSONEncoder
     #world_map_json = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     #return cls, world_map_id
-    return 'success','sucess2'
+    return 'success'

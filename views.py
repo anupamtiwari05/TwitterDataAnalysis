@@ -19,6 +19,6 @@ def hello():
     elif request.method=='POST':
         twitterHandle = request.form['twitterhandle']
         obj=tweetsSenti()
-        string1 = obj.searchTweets(twitterHandle)
+        world_map_string, world_map_ids = obj.searchTweets(twitterHandle)
   
-        return string1 
+        return render_template('hello.html', worldPlot = world_map_string, world_map_ids = world_map_ids)

@@ -90,6 +90,13 @@ class tweetsSenti:
         mean_sentiments_country_df = meanSentimentsCountry(usa_tweets_count)
         mean_sentiments_UsState_df = meanSentimentsUsState(mean_sentiments_country_df)
 
+        world_map_df  = mean_sentiments_UsState_df[['Country_User','Mean_Polarity_Country','Weighted_Mean_Polarity_Country','Total_Tweets_Country']]
+        world_map =  world_map_df.groupby('Country_User').mean()
+  
+        UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
+        UsState_map =  UsState_map_df.groupby('USA_State_User').mean()
+       
+        world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
         return 'Success'
 
 def clean_Tweets(Original_status_df):
@@ -260,7 +267,10 @@ def calculate_sentiment(tweet_df):
 def countryTweetsCount(dataframe):
     dataframe['Total_Tweets_Country']=int()
     for country in dataframe.Country_User.unique():
-        dataframe.loc[dataframe.Country_User==country,'Total_Tweets_Country'] = (dataframe[dataframe.Country_User==country].count().values[3])
+        if(country == ''):
+            dataframe.loc[dataframe.Country_User==country,'Total_Tweets_Country']= np.nan
+        else:
+            dataframe.loc[dataframe.Country_User==country,'Total_Tweets_Country'] = (dataframe[dataframe.Country_User==country].count().values[3])
 
     return dataframe
 
@@ -312,3 +322,45 @@ def meanSentimentsUsState(dataframe):
             dataframe.loc[dataframe.USA_State_User==us_state,'Mean_Reputation_USA_State'] =100 * dataframe[dataframe.USA_State_User==us_state].Reputation.mean()
 
     return dataframe
+
+def worldMap(polarity,country_code):
+    from plotly import plotly
+    import json
+#==============================================================================
+#     scl = [[0.0, 'rgb(242,240,247)'],[0.2, 'rgb(218,218,235)'],[0.4, 'rgb(188,189,220)'],\
+#             [0.6, 'rgb(158,154,200)'],[0.8, 'rgb(117,107,177)'],[1.0, 'rgb(84,39,143)']]
+#==============================================================================
+    graphs = [dict(data = [dict(
+                        type = 'choropleth',
+                        locations = country_code,
+                        z = polarity,
+                        text = country_code,
+                        colorscale = [[-1,"rgb(5, 10, 172)"],[-0.5,"rgb(40, 60, 190)"],[0.0,"rgb(70, 100, 245)"],\
+                            [0.3,"rgb(90, 120, 245)"],[0.7,"rgb(106, 137, 247)"],[1,"rgb(220, 220, 220)"]],
+                        autocolorscale = False,
+                        reversescale = True,
+                        marker = dict(
+                            line = dict (
+                                color = 'rgb(180,180,180)',
+                                width = 0.5
+                            ) ),
+                        colorbar = dict(
+                            autotick = False,
+                            title = 'Polarity'),
+                      )
+                    ],
+            layout = dict(
+            title = 'World Map Plot',
+            geo = dict(
+                showframe = False,
+                showcoastlines = True,
+                projection = dict(
+                    type = 'Mercator'
+                )
+                )   
+            )
+        )
+    ]
+    world_map_id = ['World_Map']
+    world_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
+    return world_map_json, world_map_id

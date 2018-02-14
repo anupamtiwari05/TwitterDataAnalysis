@@ -325,7 +325,7 @@ def meanSentimentsUsState(dataframe):
 
 def worldMap(polarity,country_code):
      #from plotly import plotly
-     #import simplejson as json
+     from simplejson import simplejson
 #==============================================================================
 #     scl = [[0.0, 'rgb(242,240,247)'],[0.2, 'rgb(218,218,235)'],[0.4, 'rgb(188,189,220)'],\
 #             [0.6, 'rgb(158,154,200)'],[0.8, 'rgb(117,107,177)'],[1.0, 'rgb(84,39,143)']]

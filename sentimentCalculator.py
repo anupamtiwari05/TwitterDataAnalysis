@@ -216,12 +216,17 @@ def US_State_of_User(dataframe,us_city_state):
                         dummylist.append(state_updated) 
                         setblank = 1
                         break
-                elif(city_state in location_string_split or city_state.lower() in location_string_split or city_state.upper() in location_string_split):
+                elif(city_state in location_string_split or city_state.upper() in location_string_split):
                     state_updated = city_to_state_names_updated.get(city_state,city_state)
                     dummylist.append(state_updated) 
                     setblank = 1
                     break
-                    
+                elif(city_state.lower() in location_string_split):
+                    if(len(city_state)!=2):
+                       state_updated = city_to_state_names_updated.get(city_state,city_state)
+                       dummylist.append(state_updated)
+                       setblank = 1
+                       break        
             if(setblank == 0):
                 dummylist.append('')
         else:
@@ -335,8 +340,8 @@ def worldMap(polarity,country_code):
                         locations = country_code,
                         z = polarity,
                         text = country_code,
-                        colorscale = [[-1,"rgb(5, 10, 172)"],[-0.5,"rgb(40, 60, 190)"],[0.0,"rgb(70, 100, 245)"],\
-                            [0.3,"rgb(90, 120, 245)"],[0.7,"rgb(106, 137, 247)"],[1,"rgb(220, 220, 220)"]],
+                        colorscale = [[-100,"rgb(5, 10, 172)"],[-50,"rgb(40, 60, 190)"],[0.0,"rgb(70, 100, 245)"],\
+                            [50,"rgb(90, 120, 245)"],[100,"rgb(106, 137, 247)"],[1000,"rgb(220, 220, 220)"]],
                         autocolorscale = False,
                         reversescale = True,
                         marker = dict(

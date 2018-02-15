@@ -115,57 +115,77 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		<header>
 			<h1>Twitter Sentiment Analysis</h1>
 			<div class="tab">
-				<button class="tablinks" onclick="openPlot(event, 'Scatter')" id = "defaultOpen">Scatter</button>
-				<button class="tablinks" onclick="openPlot(event, 'Bar')">Bar</button>
-				<button class="tablinks" onclick="openPlot(event, 'Map')">Country Map</button>
+				<!--<button class="tablinks" onclick="openPlot(event, 'Scatter')" id="defaultOpen">Scatter</button>-->
+				<button class="tablinks" onclick="openPlot(event, 'Bar')">Bar Plot</button>
+				<button class="tablinks" onclick="openPlot(event, 'Map')">USA Map</button>
 				<button class="tablinks" onclick="openPlot(event, 'World Map')">World Map</button>
-				<button class="tablinks" onclick="openPlot(event, 'About Us')">About Us</button>
+				<button class="tablinks" onclick="openPlot(event, 'About Us')">About US</button>
 			</div>
 		</header>
-        <div id="About Us" class="tabcontent">
-		<h3>Jaha matter BADE hai, Waha PABREJA khade hai</h3>
+	<div id="About Us" class="tabcontent">	
+		<div align="left">
+			<p>
+				With a vision of analyzing and visualizing current Twitter sentiments at various location, the real-time Twitter data was extracted, processed, transformed & analyzed using a Python script.<br />
+				The Web-based & desktop versions of the application extracts live tweets from the Twitter, parse user location, calculates the polarity, subjectivity, reputation, and visualizes the information on Plotly/Tableau.<br />
+				The application is used to predict the popularity of any election candidate say #Trump can provide the popularity of President Trump, which can be a good indicator whether Donald Trump will be re-elected as the US President in upcoming elections.<br />
+			</p>
+		</div>
+			<h3>
+		    Created By: Rachit Pabreja & Nitesh Sharma<br />
+			Master of Information Technology & Analytics graduate from Rutgers Business School, New Jersey<br/>
+			</h3>
+			<h4><a href="https://nfsharma.weebly.com/">Nitesh Sharma Portfolio</a></h4>
+		<h3>	
+		Guidance By: Dr. Vijay Atluri<br />
+			Director of Master of Information Technology & Analytics
+			Rutgers Business School, New Jersey<br />
+			Inspiration : Ussama Yakub<br />
+			PhD student at Rutgers Business School, New Jersey
+		</h3>
 	    <div id="About_page"> </div>
 	</div>
-	
+	<!--<div id="Scatter" class="tabcontent">
+		<h3>Scatter Plot</h3>
+		<div id="Scatter_plot"> </div>
+	</div>-->
 	<div id="Bar" class="tabcontent">
-		<h3>Bar Plot</h3>
+		<h3>Plot Under Construction</h3>
 		<div id="Bar_plot">
 		</div>
 	</div>
 	<div id="Map" class="tabcontent">
-		<h3>Sentiments in the USA</h3>
+		<h3>Map Plot</h3>
 		<div id="Map_plot">
 		</div>
-       </div>
-       <div id="World Map" class="tabcontent">
-		<h3>Sentiments in the World</h3>
+    </div>
+    <div id="World Map" class="tabcontent">
+		<h3>World Map Plot</h3>
 		<div id="World_Map_plot">
 		</div>
-       </div>
-       <div id="Scatter" class="tabcontent">
-		<h3>Scatter Plot Polarity vs Subjectivity</h3>
-		<div id="Scatter_plot"> </div>
 	</div>
 <br>
 <br>     
-		<form method="post">
-		<div class="text">
-             Number of Tweets:
-			<select>
-				<option value="100">100</option>
-				<option value="300">300</option>
-				<option value="500">500</option>
-				<option value="1000">1000</option>
-			</select>
-		</div>
-		<br>
+<form method="post">
+	<lable>Seek the sentiments for any Twitter Handle</lable>
+	<br />
+	<br />
+	<div class="text">
+		Number of Tweets:
+		<select>
+			<option value="100">100</option>
+			<option value="300">300</option>
+			<option value="500">500</option>
+			<option value="1000">1000</option>
+		</select>
+	</div>
+	<br />
 
-		<div class="input submit">
-			<lable for="twitterhandle">Enter Twitter Handle</lable>
-			<input type="text" name="twitterhandle" />
-			<input type="submit" value="Query" class="submitButton" />
-		</div>
-		</form>
+	<div class="input submit">
+		<lable for="twitterhandle">Enter Twitter Handle</lable>
+		<input type="text" name="twitterhandle" />
+		<input type="submit" value="Query" class="submitButton" />
+	</div>
+</form>
 		<br>
 		<br>
 		<footer>
@@ -184,7 +204,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 				var world_map_ids = {{world_map_ids | safe }}
 				for (var i in world_graphs) {
 					Plotly.plot(world_map_ids[i] + '_plot', // the ID of the div, created above
-                        			world_graphs[i].data,
+                        world_graphs[i].data,
 						world_graphs[i].layout || {});
 				}
 				//USA Map

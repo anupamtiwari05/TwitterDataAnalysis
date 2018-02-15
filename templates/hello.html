@@ -179,12 +179,21 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			<!-- Plotly.js -->
 			<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 			<script type="text/javascript">
+				//World Map
 				var world_graphs = {{worldPlot | safe }}
 				var world_map_ids = {{world_map_ids | safe }}
 				for (var i in world_graphs) {
 					Plotly.plot(world_map_ids[i] + '_plot', // the ID of the div, created above
-                        world_graphs[i].data,
+                        			world_graphs[i].data,
 						world_graphs[i].layout || {});
+				}
+				//USA Map
+				var usa_map_graphs = {{usaMapPlot | safe }}
+				var usa_map_ids = {{usa_map_ids | safe }}
+				for (var i in usa_map_graphs) {
+					Plotly.plot(usa_map_ids[i] + '_plot', // the ID of the div, created above
+						usa_map_graphs[i].data,
+						usa_map_graphs[i].layout || {});
 				}
 			</script>
 		</footer>	

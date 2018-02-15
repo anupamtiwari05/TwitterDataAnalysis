@@ -162,6 +162,7 @@ def Country_of_tweet(dataframe,countries_filter):
 
 def US_State_of_User(dataframe,us_city_state):
     import re
+    import us
     dummylist =[]
     count = 0
     city_to_state_names_updated = {'Albuquerque':'New Mexico',

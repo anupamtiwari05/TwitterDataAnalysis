@@ -98,8 +98,10 @@ class tweetsSenti:
         UsState_map =  UsState_map_df.groupby('USA_State_User').mean()
        
         world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
-        return world_map_string, world_map_ids
+        us_map_string, us_map_ids = UsMapPlot(UsState_map['Weighted_Mean_Polarity_USA_State'],UsState_map.index)
 
+        return world_map_string, world_map_ids, us_map_string, us_map_ids
+    
 def clean_Tweets(Original_status_df):
     import re
     status_row = []
@@ -231,9 +233,18 @@ def US_State_of_User(dataframe,us_city_state):
             if(setblank == 0):
                 dummylist.append('')
         else:
-            list3.append('')
+            dummylist.append('')
         
-    dataframe['USA_State_User'] = dummylist
+    final_list = []
+    map_states_codes = us.states.mapping('name','abbr')
+    for i in range(len(dummylist)):
+        final_list.append(map_states_codes.get(dummylist[i]))
+
+    for i in range(len(final_list)):
+        if (final_list[i]==None):
+            final_list[i]=''
+
+    dataframe['USA_State_User'] = final_list
     
     return dataframe
 
@@ -395,3 +406,41 @@ def worldMap(polarity,country_code):
     world_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
     #Working till here
     return world_map_json, world_map_id
+
+def UsMapPlot(polarity,us_state_code):
+    from plotly import plotly
+    import simplejson as json
+
+    scl = [[0.0, 'rgb(242,240,247)'],[500, 'rgb(218,218,235)'],[1000, 'rgb(188,189,220)'],\
+            [2000, 'rgb(158,154,200)'],[2000, 'rgb(117,107,177)'],[3000, 'rgb(84,39,143)']]
+    graphs = [
+        dict(
+            data = [ dict(
+                        type='choropleth',
+                        colorscale = scl,
+                        autocolorscale = False,
+                        locations = us_state_code,
+                        z = polarity,
+                        locationmode = 'USA-states',
+                        marker = dict(
+                            line = dict (
+                                color = 'rgb(255,255,255)',
+                                width = 2
+                            ) ),
+                        colorbar = dict(
+                            title = "Map Plot")
+                        )
+                    ],
+            layout = dict(
+            title = 'Map Plot',
+            geo = dict(
+                scope='usa',
+                projection=dict( type='albers usa' ),
+                showlakes = True,
+                lakecolor = 'rgb(255, 255, 255)'),
+                 )
+            )
+            ]
+    usa_map_id = ['Map']
+    usa_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
+    return usa_map_json, usa_map_id

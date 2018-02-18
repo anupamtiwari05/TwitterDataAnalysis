@@ -4,6 +4,7 @@ Created on Mon Nov 13 20:45:47 2017
 
 @author: Rachit & Nitesh
 """
+import json
 
 class tweetsSenti:
 
@@ -11,6 +12,7 @@ class tweetsSenti:
         return super().__init__(**kwargs)
 
     def searchTweets(self, q):
+
         import numpy as np
         import pandas as pd
         import re
@@ -21,7 +23,7 @@ class tweetsSenti:
         ACCESS_SECRET = 'ScmAR4iYHCxuPHhYMifirTK0h2Jhdqt1p10uoz9lHTshT'
         consumer_key = 'bto0MsRvjjfkrl4QpndjaUneg'
         consumer_secret = '5zr7Xr9y4AbKgUCuWRmQGaMvizwg48HpVeyjbSZC4j350rIYPF'
-    
+        
         oauth = OAuth(ACCESS_TOKEN, ACCESS_SECRET, consumer_key, consumer_secret)
         twitterObj = Twitter(auth=oauth)
         #q = 'modi'
@@ -80,28 +82,30 @@ class tweetsSenti:
         
         US_States_df = US_State_of_User(Cleansed_Country_df,us_city_state_filter)
         updated_country_df = Updated_country_of_tweet(US_States_df,'USA')
-        converted_country_df = ConvertCountryName(updated_country_df)
-
-        only_country_df =   converted_country_df[converted_country_df['Country_User']!=''].reset_index(drop=True)
+        only_country_df =   updated_country_df[updated_country_df['Country_User']!=''].reset_index(drop=True)
+      
         tweet_df_live_sentiments_df = calculate_sentiment(only_country_df)
 
         country_tweets_count  = countryTweetsCount(tweet_df_live_sentiments_df)
         usa_tweets_count    = usaTweetsCount(country_tweets_count)
 
-        mean_sentiments_country_df = meanSentimentsCountry(usa_tweets_count)
+        converted_country_df = ConvertCountryName(usa_tweets_count)
+      
+        mean_sentiments_country_df = meanSentimentsCountry(converted_country_df)
         mean_sentiments_UsState_df = meanSentimentsUsState(mean_sentiments_country_df)
+        summary_df = dataSummary(mean_sentiments_UsState_df)
 
-        world_map_df  = mean_sentiments_UsState_df[['Country_User','Mean_Polarity_Country','Weighted_Mean_Polarity_Country','Total_Tweets_Country']]
-        world_map =  world_map_df.groupby('Country_User').mean()
-  
+        world_map_df  = mean_sentiments_UsState_df[['Country_User_Code','Mean_Polarity_Country','Weighted_Mean_Polarity_Country','Total_Tweets_Country']]
+        world_map =  world_map_df.groupby('Country_User_Code').mean()
+        
         UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
         UsState_map =  UsState_map_df.groupby('USA_State_User').mean()
-       
+        
         world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
         us_map_string, us_map_ids = UsMapPlot(UsState_map['Weighted_Mean_Polarity_USA_State'],UsState_map.index)
+       
+        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df['Total_Tweets_Country'].sum(), summary_df.to_html()
 
-        return world_map_string, world_map_ids, us_map_string, us_map_ids
-    
 def clean_Tweets(Original_status_df):
     import re
     status_row = []
@@ -151,10 +155,11 @@ def Country_of_tweet(dataframe,countries_filter):
                     list3.append(country_updated)
                     setblank = 1
                     break
+               
             if(setblank == 0):
-                list3.append("")
+                list3.append('')
         else:
-            list3.append("")
+            list3.append('')
         
     dataframe['Country_User'] = list3
     return dataframe
@@ -163,6 +168,7 @@ def Country_of_tweet(dataframe,countries_filter):
 def US_State_of_User(dataframe,us_city_state):
     import re
     import us
+
     dummylist =[]
     count = 0
     city_to_state_names_updated = {'Albuquerque':'New Mexico',
@@ -230,12 +236,12 @@ def US_State_of_User(dataframe,us_city_state):
                        state_updated = city_to_state_names_updated.get(city_state,city_state)
                        dummylist.append(state_updated)
                        setblank = 1
-                       break        
+                       break    
             if(setblank == 0):
                 dummylist.append('')
         else:
             dummylist.append('')
-        
+
     final_list = []
     map_states_codes = us.states.mapping('name','abbr')
     for i in range(len(dummylist)):
@@ -250,13 +256,14 @@ def US_State_of_User(dataframe,us_city_state):
     return dataframe
 
 def Updated_country_of_tweet(dataframe,country):
+       
     countrylist = []
     for i in range(len(dataframe)):
-        if(dataframe.iloc[i,:]['USA_State_User']!=""):
+        if(dataframe.iloc[i,:]['USA_State_User']!=''):
             countrylist.append(country)
         else:
             countrylist.append(dataframe.iloc[i,:]['Country_User'])
-                          
+            
     dataframe['Country_User'] = countrylist
     return  dataframe 
 
@@ -279,8 +286,10 @@ def ConvertCountryName(dataframe):
         except KeyError:
             countryCodes.append('')
     
-    dataframe['Country_User'] = countryCodes
+    dataframe['Country_User_Code'] = countryCodes
     return dataframe
+
+
 
 def calculate_sentiment(tweet_df):
     from textblob import TextBlob
@@ -305,6 +314,7 @@ def calculate_sentiment(tweet_df):
     return tweet_df
 
 def countryTweetsCount(dataframe):
+    import numpy as np
     dataframe['Total_Tweets_Country']=int()
     for country in dataframe.Country_User.unique():
         if(country == ''):
@@ -366,82 +376,50 @@ def meanSentimentsUsState(dataframe):
 def worldMap(polarity,country_code):
     from plotly import plotly
     import simplejson as json
-#==============================================================================
-#     scl = [[0.0, 'rgb(242,240,247)'],[0.2, 'rgb(218,218,235)'],[0.4, 'rgb(188,189,220)'],\
-#             [0.6, 'rgb(158,154,200)'],[0.8, 'rgb(117,107,177)'],[1.0, 'rgb(84,39,143)']]
-#==============================================================================
-    graphs = [dict(data = [dict(
-                        type = 'choropleth',
-                        locations = country_code,
-                        z = polarity,
-                        text = country_code,
-                        colorscale = [[-100,"rgb(5, 10, 172)"],[-50,"rgb(40, 60, 190)"],[0.0,"rgb(70, 100, 245)"],\
-                            [50,"rgb(90, 120, 245)"],[100,"rgb(106, 137, 247)"],[1000,"rgb(220, 220, 220)"]],
-                        autocolorscale = False,
-                        reversescale = True,
-                        marker = dict(
-                            line = dict (
-                                color = 'rgb(180,180,180)',
-                                width = 0.5
-                            ) ),
-                        colorbar = dict(
-                            autotick = False,
-                            title = 'Polarity'),
-                      )
-                    ],
-            layout = dict(
-            title = 'World Map Plot',
-            geo = dict(
-                showframe = False,
-                showcoastlines = True,
-                projection = dict(
-                    type = 'Mercator'
-                )
-                )   
-            )
-        )
-    ]
+    scl_world = [[-100,"rgb(5, 10, 172)"],\
+           [0,"rgb(40, 60, 190)"],[200,"rgb(70, 100, 245)"],[400,"rgb(90, 120, 245)"],[600,"rgb(106, 137, 247)"],[800,"rgb(220, 220, 220)"]]
+
+    graphs = [dict(data = [dict(type = 'choropleth',locations = country_code,z = polarity,text = country_code,
+                                colorscale = scl_world,
+                                autocolorscale = False, reversescale = True,
+                                marker = dict( line = dict(color = 'rgb(86,81,81)', width = 1)), 
+                                colorbar = dict(title = 'Polarity'))],
+                   layout = dict(title = 'World Map (Polarity)',geo = dict(showframe = True,showcoastlines = True,projection = dict(type = 'Mercator')),
+                                 autosize=False, width=1200, height=700,
+                                 margin=dict(l=0,r=10,b=80,t=90,pad=0)))]
     world_map_id = ['World_Map']
-    #data =json.dumps(world_map_id)
-    #cls=plotly.plotly.utils.PlotlyJSONEncoder
+    
     world_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
-    #Working till here
     return world_map_json, world_map_id
 
 def UsMapPlot(polarity,us_state_code):
     from plotly import plotly
     import simplejson as json
 
-    scl = [[0.0, 'rgb(242,240,247)'],[500, 'rgb(218,218,235)'],[1000, 'rgb(188,189,220)'],\
+    scl_usa = [[0.0, 'rgb(242,240,247)'],[500, 'rgb(218,218,235)'],[1000, 'rgb(188,189,220)'],\
             [2000, 'rgb(158,154,200)'],[2000, 'rgb(117,107,177)'],[3000, 'rgb(84,39,143)']]
-    graphs = [
-        dict(
-            data = [ dict(
-                        type='choropleth',
-                        colorscale = scl,
-                        autocolorscale = False,
-                        locations = us_state_code,
-                        z = polarity,
-                        locationmode = 'USA-states',
-                        marker = dict(
-                            line = dict (
-                                color = 'rgb(255,255,255)',
-                                width = 2
-                            ) ),
-                        colorbar = dict(
-                            title = "Map Plot")
-                        )
-                    ],
-            layout = dict(
-            title = 'Map Plot',
-            geo = dict(
-                scope='usa',
-                projection=dict( type='albers usa' ),
-                showlakes = True,
-                lakecolor = 'rgb(255, 255, 255)'),
-                 )
-            )
-            ]
+    graphs = [dict( data = [dict(type='choropleth',colorscale = scl_usa, autocolorscale = False,reversescale = True,
+                                 locations = us_state_code, z = polarity, locationmode = 'USA-states',
+                                 marker = dict(line = dict (color = 'rgb(255,255,255)',width =1)),colorbar = dict(title = "Map Plot"))],
+                   layout = dict(title = 'USA Map (Poalrity)',geo = dict(showframe = True,scope='usa',projection=dict(type='albers usa' ),
+                                                                        showlakes = True,lakecolor = 'rgb(255, 255, 255)'),
+                                 autosize=False, width=1200, height=700, margin=dict(l=0,r=10,b=80,t=90,pad=0)))]
     usa_map_id = ['Map']
     usa_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
     return usa_map_json, usa_map_id
+
+def dataSummary(df):
+    import pandas as pd
+    Country=[]
+    total_tweets_Count =[]
+    summary_df = pd.DataFrame(columns=('Country_User','Total_Tweets_Country'))
+    for country in df.Country_User.unique():
+        Country.append(country)
+        total_tweets_Count.append(int(df[df.Country_User==country]['Total_Tweets_Country'].mean()))
+    
+    summary_df['Country_User'] = Country
+    summary_df['Total_Tweets_Country'] = total_tweets_Count
+                                  
+    #df.groupby(country).mean()
+    summary_df = summary_df.sort_values(by=['Country_User']).reset_index(drop=True)
+    return summary_df

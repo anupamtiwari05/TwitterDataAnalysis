@@ -178,7 +178,12 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	       </p>
 	       <p>{{ world_country_df | safe }}</p>
 		</div>
-			<div align="center"> Polarity identifies the context of a text, +ive or -ive</div>
+		<br />
+		<div style="float:none" align="center">
+			{% if country_tweets_count%}
+			Polarity identifies the context of a text, +ive or -ive
+			{% endif %}
+		</div>
 	</div>
 		
 <br>

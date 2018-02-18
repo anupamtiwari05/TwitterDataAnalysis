@@ -108,10 +108,14 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			}
 			// Get the element with id="defaultOpen" and click on it
 			document.getElementById("defaultOpen").click();
+
+			function waitCursor() {
+				document.getElementById("form123").style.cursor="wait";			
+			}
 		</script>
     </head>
     <body>
-	<div class="flex-container">
+	<div class="flex-container" id="form123">
 		<header>
 			<h1>Twitter Sentiment Analysis</h1>
 			<div class="tab">
@@ -122,29 +126,29 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 				<button class="tablinks" onclick="openPlot(event, 'About Us')">About US</button>
 			</div>
 		</header>
-	<div id="About Us" class="tabcontent">	
-		<div align="left">
-			<p>
-				With a vision of analyzing and visualizing current Twitter sentiments at various location, the real-time Twitter data was extracted, processed, transformed & analyzed using a Python script.<br />
-				The Web-based & desktop versions of the application extracts live tweets from the Twitter, parse user location, calculates the polarity, subjectivity, reputation, and visualizes the information on Plotly/Tableau.<br />
-				The application is used to predict the popularity of any election candidate say #Trump can provide the popularity of President Trump, which can be a good indicator whether Donald Trump will be re-elected as the US President in upcoming elections.<br />
-			</p>
-		</div>
+		<div id="About Us" class="tabcontent">
+			<div align="left">
+				<p>
+					With a vision of analyzing and visualizing current Twitter sentiments at various location, the real-time Twitter data was extracted, processed, transformed & analyzed using a Python script.<br />
+					The Web-based & desktop versions of the application extracts live tweets from the Twitter, parse user location, calculates the polarity, subjectivity, reputation, and visualizes the information on Plotly/Tableau.<br />
+					The application is used to predict the popularity of any election candidate say #Trump can provide the popularity of President Trump, which can be a good indicator whether Donald Trump will be re-elected as the US President in upcoming elections.<br />
+				</p>
+			</div>
 			<h3>
-		    	Created By: Rachit Pabreja & Nitesh Sharma<br />
-			Master of Information Technology & Analytics graduate from Rutgers Business School, New Jersey<br/>
+				Created By: Rachit Pabreja & Nitesh Sharma<br />
+				Master of Information Technology & Analytics graduate from Rutgers Business School, New Jersey<br />
 			</h3>
 			<h4><a href="https://rachitpabreja.weebly.com/">Rachit Pabreja Portfolio</a><t/>
 			<a href="https://nfsharma.weebly.com/">Nitesh Sharma Portfolio</a></h4>
 			<h3>
-			Guidance By: Dr. Vijay Atluri<br />
-			Director of Master of Information Technology & Analytics
-			Rutgers Business School, New Jersey<br />
-			Inspiration : Ussama Yakub<br />
-			PhD student at Rutgers Business School, New Jersey
+				Guidance By: Dr. Vijay Atluri<br />
+				Director of Master of Information Technology & Analytics
+				Rutgers Business School, New Jersey<br />
+				Inspiration : Ussama Yakub<br />
+				PhD student at Rutgers Business School, New Jersey
 			</h3>
-	    <div id="About_page"> </div>
-	</div>
+			<div id="About_page"> </div>
+		</div>
 	<!--<div id="Scatter" class="tabcontent">
 		<h3>Scatter Plot</h3>
 		<div id="Scatter_plot"> </div>
@@ -159,16 +163,31 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		<div id="Map_plot">
 		</div>
     </div>
-    <div id="World Map" class="tabcontent">
-		<h3>World Map Plot</h3>
-		<div id="World_Map_plot">
+	<div id="World Map" class="tabcontent" >
+		<h3>
+			{% if not country_tweets_count%}
+			World Map Plot
+			{% endif %}
+		</h3>
+		<!--<div id="World_Map_plot" align="justify" style="height:500px; border:1px solid black">-->
+		<div id="World_Map_plot" style="float:left"></div>
+		<div style="float:left; margin-left: 5px ">
+			<p>{% if country_tweets_count%}
+			Total tweets: {{country_tweets_count}}
+			{% endif %}
+	       </p>
+	       <p>{{ world_country_df | safe }}</p>
 		</div>
+			<div align="center"> Polarity identifies the context of a text, +ive or -ive</div>
 	</div>
+		
 <br>
 <br>     
-<form method="post">
+<form method="post" >
 	<h3>Seek the sentiments for any Twitter Handle</h3>
-	<br />
+		<!--<img src="C:\Users\sarni\source\repos\SentimentSeekerVSTS\ApnaProject\templates\spinner.gif" class="loadingGif" 
+			 style="cursor:progress"/>-->	
+	<br>
 	<div class="text">
 		Number of Tweets:
 		<select>
@@ -178,12 +197,11 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			<option value="1000">1000</option>
 		</select>
 	</div>
-	<br />
-
+	<br>
 	<div class="input submit">
 		<lable for="twitterhandle">Enter Twitter Handle</lable>
 		<input type="text" name="twitterhandle" />
-		<input type="submit" value="Query" class="submitButton" />
+		<input type="submit" value="Query" class="submitButton" onclick="waitCursor()"/>
 	</div>
 </form>
 		<br>
@@ -217,6 +235,6 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 				}
 			</script>
 		</footer>	
-		</div>
+	</div>	
     </body>
 </html>

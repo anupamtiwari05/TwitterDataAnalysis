@@ -9,7 +9,7 @@ from flask import render_template,url_for, flash, redirect, request
 from flask import Markup
 from main import app
 from sentimentCalculator import tweetsSenti
-from progress.spinner import Spinner
+
 # from markupsafe import Markup
 # index view function suppressed for brevity
 

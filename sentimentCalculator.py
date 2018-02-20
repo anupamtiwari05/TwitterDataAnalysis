@@ -12,12 +12,12 @@ class tweetsSenti:
         return super().__init__(**kwargs)
 
     def searchTweets(self, q):
-
         import numpy as np
         import pandas as pd
         import re
         from twitter import Twitter, OAuth, TwitterHTTPError
         from pandas.io.json import json_normalize
+        from pycountry import countries
         
         ACCESS_TOKEN = '136600388-9iihe7SFq8nZUOL5GjxoZlPbxW2MYcScWlZ6sD3a'
         ACCESS_SECRET = 'ScmAR4iYHCxuPHhYMifirTK0h2Jhdqt1p10uoz9lHTshT'
@@ -28,16 +28,18 @@ class tweetsSenti:
         twitterObj = Twitter(auth=oauth)
         #q = 'modi'
         count = 100
+       
         try:
             search_results = twitterObj.search.tweets(q=q,count = count)
         except TwitterHTTPError:
-            return 'twitter server error'
+            return "","","","","","","",""
+
         Original_status_df = json_normalize(search_results,['statuses'])
         Original_status_df = pd.DataFrame(Original_status_df)
         min_id = min(Original_status_df['id'])
         max_id = max(Original_status_df['id'])
 
-        while len(Original_status_df) < 300:
+        while len(Original_status_df) < 1000:
             try:
                 search_results = twitterObj.search.tweets(q=q,count=count,max_id = min_id)
                 results = json_normalize(search_results,['statuses'])
@@ -45,23 +47,26 @@ class tweetsSenti:
                 min_id = min(results['id'])
                 max_id = max(results['id'])
             except TwitterHTTPError:
-                return 'twitter server error'
-        
+                return "","","","","","","",""
 
+        countries_name=[]
         Original_status_df = Original_status_df.reset_index()
         cleansed_tweets_df = clean_Tweets(Original_status_df)
-        countries = ['Argentina','Austria','Australia','Brasil','Brazil','Bangladesh','Cameroon','Canada','Cyprus',
-                    'Deutschland','Dubai','Ecuador','Egypt',
-                    'England','Kenya','Nigeria','Hong Kong','Holand','Finland','Prague','USA','Greece',
-                    'Kazakhstan','Thailand','Italy','Italia','India','Israel','Ireland','Pakistan','Polska','Poland',
-                    'United States','Germany','Spain','France','Fiji','China','Mexico','Netherlands',
-                    'New Zealand','North Korea','Japan','Jordan',
-                    'Oman','Palestine','United Arab Emirates','UAE','Portugal','Scotland','Slovakia',
-                    'South Africa','Switzerland','Sweden',
-                    'Turkey','Peru','Puerto Rico','Russia','Singapore','Chile','United Kingdom','Indonesia','Philippines',
-                    'Ukraine','UK','Venezuela','Yemen']
+        for c in list(countries):
+            countries_name.append(c.name)
+        
+        #countries_name = ['Argentina','Austria','Australia','Brasil','Brazil','Bangladesh','Cameroon','Canada','Cyprus',
+        #            'Deutschland','Dubai','Ecuador','Egypt',
+        #            'England','Kenya','Nigeria','Hong Kong','Holand','Finland','Prague','USA','Greece',
+        #            'Kazakhstan','Thailand','Italy','Italia','India','Israel','Ireland','Pakistan','Polska','Poland',
+        #            'United States','Germany','Spain','France','Fiji','China','Mexico','Netherlands',
+        #            'New Zealand','North Korea','Japan','Jordan',
+        #            'Oman','Palestine','United Arab Emirates','UAE','Portugal','Scotland','Slovakia',
+        #            'South Africa','Switzerland','Sweden',
+        #            'Turkey','Peru','Puerto Rico','Russia','Singapore','Chile','United Kingdom','Indonesia','Philippines',
+        #            'Ukraine','UK','Venezuela','Yemen']
 
-        Cleansed_Country_df = Country_of_tweet(cleansed_tweets_df,countries)
+        Cleansed_Country_df = Country_of_tweet(cleansed_tweets_df,countries_name)
 
         us_city_state_filter =['Albuquerque','Asheville','Atlanta','Austin','Baltimore','Boston','Columbia','Dallas','Detroit','Denver',
                        'Las Vegas','Georgia','Miami','Honolulu','Los Angeles','Pensacola','Richmond','Kansas',
@@ -93,18 +98,21 @@ class tweetsSenti:
       
         mean_sentiments_country_df = meanSentimentsCountry(converted_country_df)
         mean_sentiments_UsState_df = meanSentimentsUsState(mean_sentiments_country_df)
-        summary_df = dataSummary(mean_sentiments_UsState_df)
+
+        summary_df_world = dataSummaryWorld(mean_sentiments_UsState_df)
+        summary_df_Country = dataSummaryCountry(mean_sentiments_UsState_df,'USA')
 
         world_map_df  = mean_sentiments_UsState_df[['Country_User_Code','Mean_Polarity_Country','Weighted_Mean_Polarity_Country','Total_Tweets_Country']]
         world_map =  world_map_df.groupby('Country_User_Code').mean()
         
-        UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
-        UsState_map =  UsState_map_df.groupby('USA_State_User').mean()
+        UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User_Code','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
+        UsState_map =  UsState_map_df.groupby('USA_State_User_Code').mean()
         
         world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
         us_map_string, us_map_ids = UsMapPlot(UsState_map['Weighted_Mean_Polarity_USA_State'],UsState_map.index)
        
-        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df['Total_Tweets_Country'].sum(), summary_df.to_html()
+        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df_world['Total_Tweets_Country'].sum(), summary_df_world.to_html(),summary_df_Country['Total_Tweets_USA_State'].sum(),summary_df_Country.to_html()
+
 
 def clean_Tweets(Original_status_df):
     import re
@@ -243,6 +251,7 @@ def US_State_of_User(dataframe,us_city_state):
             dummylist.append('')
 
     final_list = []
+    dataframe['USA_State_User'] = dummylist
     map_states_codes = us.states.mapping('name','abbr')
     for i in range(len(dummylist)):
         final_list.append(map_states_codes.get(dummylist[i]))
@@ -251,7 +260,7 @@ def US_State_of_User(dataframe,us_city_state):
         if (final_list[i]==None):
             final_list[i]=''
 
-    dataframe['USA_State_User'] = final_list
+    dataframe['USA_State_User_Code'] = final_list
     
     return dataframe
 
@@ -408,7 +417,7 @@ def UsMapPlot(polarity,us_state_code):
     usa_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
     return usa_map_json, usa_map_id
 
-def dataSummary(df):
+def dataSummaryWorld(df):
     import pandas as pd
     Country=[]
     total_tweets_Count =[]
@@ -423,3 +432,22 @@ def dataSummary(df):
     #df.groupby(country).mean()
     summary_df = summary_df.sort_values(by=['Country_User']).reset_index(drop=True)
     return summary_df
+
+def dataSummaryCountry(df, countryName):
+    import pandas as pd
+    columnNameLocation = str(countryName) +'_State_User'
+    columnNameTweets = 'Total_Tweets_' + str(countryName) + '_State'
+    country_state=[]
+    total_tweets_count_state =[]
+    summary_df_country = pd.DataFrame(columns=(columnNameLocation,columnNameTweets))
+    for state in df[columnNameLocation].unique():
+        if(state!= ''):
+           country_state.append(state)
+           total_tweets_count_state.append(int(df[df[columnNameLocation]==state][columnNameTweets].mean()))
+    
+    summary_df_country[columnNameLocation] = country_state
+    summary_df_country[columnNameTweets] = total_tweets_count_state
+                                  
+    #df.groupby(country).mean()
+    summary_df_country = summary_df_country.sort_values(by=[columnNameLocation]).reset_index(drop=True)
+    return summary_df_country

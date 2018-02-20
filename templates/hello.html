@@ -159,13 +159,26 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		</div>
 	</div>
 	<div id="Map" class="tabcontent">
-		<h3>Map Plot</h3>
-		<div id="Map_plot">
-		</div>
-    </div>
-	<div id="World Map" class="tabcontent" >
+
 		<h3>
 			{% if not country_tweets_count%}
+			Map Plot
+			{% endif %}
+		</h3>
+		<div id="Map_plot"  style="float:left;overflow:auto">
+		</div>
+		<div style="float:left; margin-left: 5px;overflow:auto">
+			<p>
+				{% if country_tweets_count%}
+				Total tweets: {{country_tweets_count}}
+				{% endif %}
+			</p>
+			<p>{{ summary_df_Country | safe }}</p>
+		</div>
+	</div>
+	<div id="World Map" class="tabcontent" >
+		<h3>
+			{% if not world_tweets_count%}
 			World Map Plot
 			{% endif %}
 		</h3>
@@ -173,7 +186,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		<div id="World_Map_plot" style="float:left;overflow:auto"></div>
 		<div style="float:left; margin-left: 5px;overflow:auto">
 			<p>{% if country_tweets_count%}
-			Total tweets: {{country_tweets_count}}
+			Total tweets: {{world_tweets_count}}
 			{% endif %}
 	       </p>
 	       <p>{{ world_country_df | safe }}</p>
@@ -184,15 +197,19 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			Polarity identifies the context of a text, +ive or -ive
 			{% endif %}
 		</div>
-	</div>
-		
-<br>
+	</div>		
 <br>     
 <form method="post" >
 	<h3>Seek the sentiments for any Twitter Handle</h3>
 		<!--<img src="C:\Users\sarni\source\repos\SentimentSeekerVSTS\ApnaProject\templates\spinner.gif" class="loadingGif" 
 			 style="cursor:progress"/>-->	
 	<br>
+	<div align="center">
+		{% if exception%}
+		Could not retreive tweets from twitter, please enter another twitter handle.
+		{%endif%}
+	</div>
+	<br />
 	<div class="text">
 		Number of Tweets:
 		<select>

@@ -199,11 +199,16 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		</div>
 	</div>		
 <br>     
-<form method="post" >
+<form method="post">
 	<h3>Seek the sentiments for any Twitter Handle</h3>
-		<!--<img src="C:\Users\sarni\source\repos\SentimentSeekerVSTS\ApnaProject\templates\spinner.gif" class="loadingGif" 
-			 style="cursor:progress"/>-->	
-	<br>
+	<!--<img src="C:\Users\sarni\source\repos\SentimentSeekerVSTS\ApnaProject\templates\spinner.gif" class="loadingGif"
+		 style="cursor:progress"/>-->
+	<br />
+	<div align="center" style="color:green">
+		{% if world_tweets_count%}
+		Tweets are successfully retreived. Please check any plot.
+		{%endif%}
+	</div>
 	<div align="center">
 		{% if exception%}
 		Could not retreive tweets from twitter, please enter another twitter handle.
@@ -219,11 +224,11 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			<option value="1000">1000</option>
 		</select>
 	</div>
-	<br>
+	<br />
 	<div class="input submit">
 		<lable for="twitterhandle">Enter Twitter Handle</lable>
 		<input type="text" name="twitterhandle" />
-		<input type="submit" value="Query" class="submitButton" onclick="waitCursor()"/>
+		<input type="submit" value="Query" class="submitButton" onclick="waitCursor()" />
 	</div>
 </form>
 		<br>

@@ -23,7 +23,7 @@ def hello():
         countFileR=open(fullPath,'r')
         count = countFileR.read()
         countFileR.close()
-        return render_template('hello.html')
+        return render_template('hello.html', likesCount=count, likeButtonColor='cornflowerblue',likeButtonValue='Like')
     elif request.method=='POST':
         twitterHandle = request.form['twitterhandle']
         

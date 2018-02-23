@@ -57,7 +57,7 @@ def hello():
         countFileW = open(fullPath,'w')
         if newCount == 0:
             countFileW.write(count)
-        elif newcount != 0:
+        elif newCount != 0:
             countFileW.write(str(newCount))
         
         countFileW.close()

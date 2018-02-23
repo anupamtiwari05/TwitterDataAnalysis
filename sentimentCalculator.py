@@ -32,14 +32,14 @@ class tweetsSenti:
         try:
             search_results = twitterObj.search.tweets(q=q,count = count)
         except TwitterHTTPError:
-            return "","","","","","","",""
+            return "","","","","","","","","",""
 
         Original_status_df = json_normalize(search_results,['statuses'])
         Original_status_df = pd.DataFrame(Original_status_df)
         min_id = min(Original_status_df['id'])
         max_id = max(Original_status_df['id'])
 
-        while len(Original_status_df) < 1000:
+        while len(Original_status_df) < 200:
             try:
                 search_results = twitterObj.search.tweets(q=q,count=count,max_id = min_id)
                 results = json_normalize(search_results,['statuses'])
@@ -47,7 +47,7 @@ class tweetsSenti:
                 min_id = min(results['id'])
                 max_id = max(results['id'])
             except TwitterHTTPError:
-                return "","","","","","","",""
+                return "","","","","","","","","",""
 
         countries_name=[]
         Original_status_df = Original_status_df.reset_index()
@@ -107,18 +107,25 @@ class tweetsSenti:
         
         UsState_map_df  = mean_sentiments_UsState_df[['USA_State_User_Code','Mean_Polarity_USA_State','Weighted_Mean_Polarity_USA_State','Total_Tweets_USA_State']]
         UsState_map =  UsState_map_df.groupby('USA_State_User_Code').mean()
+
+        bar_df = mean_sentiments_UsState_df[['Weighted_Mean_Polarity_Country','Weighted_Mean_Subjectivity_Country','created_at']]
+        times =pd.to_datetime(bar_df['created_at'])
+        bar_df.index = times
+        bar_df = bar_df.resample('T').mean()
+
+        bar_string, bar_ids = bar_sentiments(bar_df['Weighted_Mean_Polarity_Country'],bar_df['Weighted_Mean_Subjectivity_Country'],bar_df.index)
         
         world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
         us_map_string, us_map_ids = UsMapPlot(UsState_map['Weighted_Mean_Polarity_USA_State'],UsState_map.index)
        
-        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df_world['Total_Tweets_Country'].sum(), summary_df_world.to_html(),summary_df_Country['Total_Tweets_USA_State'].sum(),summary_df_Country.to_html()
+        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df_world['Total_Tweets_Country'].sum(), summary_df_world.to_html(),summary_df_Country['Total_Tweets_USA_State'].sum(),summary_df_Country.to_html(), bar_string, bar_ids
 
 
 def clean_Tweets(Original_status_df):
     import re
     status_row = []
     location=[]
-    tweet_df = Original_status_df[['user','text']]
+    tweet_df = Original_status_df[['user','text','created_at']]
     for i in range(len(tweet_df)):
         status_ = tweet_df.iloc[i,:]['text'].lower()
         status_ = re.sub('((www\.[^\s]+)|(https?://[^\s]+))','',status_)
@@ -349,6 +356,7 @@ def meanSentimentsCountry(dataframe):
     dataframe['Mean_Subjectivity_Country']=float()
     dataframe['Mean_Reputation_Country']=float()
     dataframe['Weighted_Mean_Polarity_Country']=float()
+    dataframe['Weighted_Mean_Subjectivity_Country']=float()
 
     for country in dataframe.Country_User.unique():
         if(country == ''):
@@ -359,6 +367,7 @@ def meanSentimentsCountry(dataframe):
             dataframe.loc[dataframe.Country_User==country,'Mean_Polarity_Country'] =100 * dataframe[dataframe.Country_User==country].Polarity.mean()
             dataframe.loc[dataframe.Country_User==country,'Weighted_Mean_Polarity_Country'] =(1000000 * dataframe[dataframe.Country_User==country].Polarity.mean() * dataframe[dataframe.Country_User==country].Total_Tweets_Country.mean())/dataframe['Total_Tweets_Country'].sum()     
             dataframe.loc[dataframe.Country_User==country,'Mean_Subjectivity_Country'] =100 * dataframe[dataframe.Country_User==country].Subjectivity.mean()
+            dataframe.loc[dataframe.Country_User==country,'Weighted_Mean_Subjectivity_Country'] =(1000000 * dataframe[dataframe.Country_User==country].Subjectivity.mean() * dataframe[dataframe.Country_User==country].Total_Tweets_Country.mean())/dataframe['Total_Tweets_Country'].sum()     
             dataframe.loc[dataframe.Country_User==country,'Mean_Reputation_Country'] =100 * dataframe[dataframe.Country_User==country].Reputation.mean()
 
     return dataframe
@@ -416,6 +425,16 @@ def UsMapPlot(polarity,us_state_code):
     usa_map_id = ['Map']
     usa_map_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
     return usa_map_json, usa_map_id
+
+def bar_sentiments(polarity,subjectivity,dates):
+    from plotly import plotly
+    import simplejson as json
+    
+    graphs = [dict(data=[dict(x=dates, y=polarity, type='bar', name='Polarity'),dict(x=dates,y=subjectivity,type='bar',
+                    name='Subjectivity'),], layout=dict(autosize=False, width=1800, height=700, margin=dict(l=0,r=10,b=80,t=90,pad=0),showframe = True, title='Bar Plot',barmode='group',bargap=0.10,bargroupgap=0.1))]
+    bar_id = ['Bar']
+    basic_bar_json = json.dumps(graphs, cls=plotly.plotly.utils.PlotlyJSONEncoder)
+    return basic_bar_json,bar_id
 
 def dataSummaryWorld(df):
     import pandas as pd

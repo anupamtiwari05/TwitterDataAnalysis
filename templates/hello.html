@@ -34,6 +34,16 @@ div.tab button.active {
     background-color: #1DA1F2;
 }
 
+#likeButtonID:hover {
+				cursor:pointer;
+			}
+#likeButtonID {
+				font-family: Segoe UI,Arial,sans-serif;
+				font-size: 15px;
+				float: right;
+				color: white;
+				border-radius: 15px
+			}
 /* Style the tab content */
 .tabcontent {
     display: none;
@@ -80,6 +90,10 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	background: #1DA1F2;
 	color:#fff;
 }
+
+.submitButton:hover {
+			cursor:pointer}
+
 .text {
 	border-radius: 20px;
 	font-family: "Segoe UI",Arial,sans-serif;
@@ -110,7 +124,30 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			document.getElementById("defaultOpen").click();
 
 			function waitCursor() {
-				document.getElementById("form123").style.cursor="wait";			
+				document.getElementById("form123").style.cursor = "progress";
+				document.getElementById("hiddenQueryText").value = "fromquery";
+				if (document.getElementById("likeButtonID").style.backgroundColor == "mediumseagreen") {
+					document.getElementById("hiddenButtonText").value = "UnLike";
+
+				}
+				else {
+					document.getElementById("hiddenButtonText").value = "Like";
+				}
+				
+			}
+
+			function likeBackgroundChange() {
+				if (document.getElementById("likeButtonID").style.backgroundColor == "mediumseagreen") {
+					document.getElementById("likeButtonID").value = "Like";
+					document.getElementById("hiddenButtonText").value = "Like";
+					
+				}
+				else {
+					document.getElementById("likeButtonID").style.backgroundColor = "mediumseagreen";
+					document.getElementById("likeButtonID").value = "UnLike";
+					document.getElementById("hiddenButtonText").value = "UnLike";
+				}
+
 			}
 		</script>
     </head>
@@ -159,7 +196,6 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		</div>
 	</div>
 	<div id="Map" class="tabcontent">
-
 		<h3>
 			{% if not country_tweets_count%}
 			Map Plot
@@ -228,15 +264,25 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	<div class="input submit">
 		<lable for="twitterhandle">Enter Twitter Handle</lable>
 		<input type="text" name="twitterhandle" />
+		<input id="hiddenButtonText" type="hidden" name="hiddenButtonValue" />
+		<input id="hiddenQueryText" type="hidden" name="hiddenQueryValue" />
 		<input type="submit" value="Query" class="submitButton" onclick="waitCursor()" />
+		<div>
+			<button type="submit" name="likeButton" id="likeButtonID" onclick="likeBackgroundChange()" style="background-color:{{likeButtonColor}};">{{likeButtonValue}}</button>
+			<label align="right" id="likeCountLabel" name="likesCount" style="float:right; font-family:Segoe UI,Arial,sans-serif">{{likesCount}}</label>
+		</div>
 	</div>
+	
 </form>
+
 		<br>
 		<br>
 		<footer>
 			Developed by Nitesh Sharma & Rachit Pabreja (Beta Version)
 			<br />
 			Contributors: Dr. Vijay Atluri & Ussama Yakub
+			<!--<button name="likeButton" id="likeButtonID" onclick="likeBackgroundChange()" style="background-color: {{likeButtonColor}};">{{likeButtonValue}}</button>
+			<label align="right" id="likeCountLabel" name="likesCount" style="float:right;font-family:Segoe UI,Arial,sans-serif">{{likesCount}}</label>-->
 			<!-- D3.js -->
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 			<!-- jQuery -->
@@ -259,6 +305,14 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 					Plotly.plot(usa_map_ids[i] + '_plot', // the ID of the div, created above
 						usa_map_graphs[i].data,
 						usa_map_graphs[i].layout || {});
+				}
+				//bar plot
+				var bar_graphs = {{barPlot | safe }}
+				var bar_ids = {{bar_ids | safe }}
+				for (var i in bar_graphs) {
+					Plotly.plot(bar_ids[i] + '_plot', // the ID of the div, created above
+						bar_graphs[i].data,
+						bar_graphs[i].layout || {});
 				}
 			</script>
 		</footer>	

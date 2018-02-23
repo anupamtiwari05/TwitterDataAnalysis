@@ -10,6 +10,7 @@ from pycountry import countries
 from flask import Markup
 from main import app
 from sentimentCalculator import tweetsSenti
+import os
 
 # from markupsafe import Markup
 # index view function suppressed for brevity
@@ -17,6 +18,11 @@ from sentimentCalculator import tweetsSenti
 @app.route('/', methods=['GET','POST'])
 def hello():
     if request.method=='GET':
+        path=os.getcwd()
+        fullPath=os.path.join(path,'Databases\\LikesCount.txt')
+        countFileR=open(fullPath,'r')
+        count = countFileR.read()
+        countFileR.close()
         return render_template('hello.html')
     elif request.method=='POST':
         twitterHandle = request.form['twitterhandle']

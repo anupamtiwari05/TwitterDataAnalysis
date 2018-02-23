@@ -40,7 +40,6 @@ def hello():
         countFileR=open(fullPath,'r')
         count = countFileR.read()
         countFileR.close()
-        likeButtonColor=''
         
 
         if hiddenQueryText == '':
@@ -59,7 +58,7 @@ def hello():
         if newCount == 0:
             countFileW.write(count)
         elif newcount != 0:
-            countFileW.write(count)
+            countFileW.write(str(newCount))
         
         countFileW.close()
 

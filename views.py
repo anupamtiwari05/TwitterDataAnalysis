@@ -22,7 +22,6 @@ import os
 #	return '<html><head>Home Page</head><body>'+ createLink +'</body></html>'
 
 
-
 @app.route('/', methods=['GET','POST'])
 def hello():
     if request.method=='GET':
@@ -31,9 +30,13 @@ def hello():
         countFileR=open(fullPath,'r')
         count = countFileR.read()
         countFileR.close()
-        return render_template('hello.html',likesCount = count)
+       
+
+        return render_template('hello.html',likesCount = count, buttonVisibility = 'visible')
     elif request.method=='POST':
         twitterHandle = request.form['twitterhandle']
+        buttonVisibility = request.form['likeButtonVisibilityValue']
+        
         path=os.getcwd()
         fullPath=os.path.join(path,'Databases\\LikesCount.txt')
         countFileR=open(fullPath,'r')
@@ -45,12 +48,12 @@ def hello():
         if(world_map_string==""):
             return render_template('hello.html', worldPlot = world_map_string, world_map_ids = world_map_ids, usaMapPlot = us_map_string, usa_map_ids = us_map_ids, 
                               world_tweets_count = world_tweets_count, world_country_df = world_country_df,country_tweets_count=country_tweets_count, summary_df_Country = summary_df_Country,
-                              bar_string = bar_string, bar_ids = bar_ids, exception = "Raise Exception", likesCount = count)
+                              bar_string = bar_string, bar_ids = bar_ids, exception = "Raise Exception", likesCount = count,buttonVisibility = buttonVisibility)
         else:
             return render_template('hello.html', worldPlot = world_map_string, world_map_ids = world_map_ids,
                                   usaMapPlot = us_map_string, usa_map_ids = us_map_ids, world_tweets_count = world_tweets_count, world_country_df = world_country_df,
                                   country_tweets_count=country_tweets_count, summary_df_Country = summary_df_Country,
-                                  barPlot = bar_string, bar_ids = bar_ids, likesCount = count)
+                                  barPlot = bar_string, bar_ids = bar_ids, likesCount = count,buttonVisibility = buttonVisibility)
        
 
 @app.route('/likeButtonAction', methods=['POST'] )
@@ -76,4 +79,4 @@ def likeButton():
         
      countFileW.close() 
 
-     return "",204   
+     return "",204 

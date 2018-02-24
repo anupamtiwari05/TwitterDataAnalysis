@@ -26,11 +26,10 @@ import os
 def hello():
     if request.method=='GET':
         path=os.getcwd()
-        fullPath=os.path.join(path,'Databases\\LikesCount.txt')
+        fullPath=os.path.join(path,'Databases\\LikeCount.txt')
         countFileR=open(fullPath,'r')
         count = countFileR.read()
         countFileR.close()
-       
 
         return render_template('hello.html',likesCount = count, buttonVisibility = 'visible')
     elif request.method=='POST':
@@ -38,7 +37,7 @@ def hello():
         buttonVisibility = request.form['likeButtonVisibilityValue']
         
         path=os.getcwd()
-        fullPath=os.path.join(path,'Databases\\LikesCount.txt')
+        fullPath=os.path.join(path,'Databases\\LikeCount.txt')
         countFileR=open(fullPath,'r')
         count = countFileR.read()
         countFileR.close()
@@ -59,24 +58,28 @@ def hello():
 @app.route('/likeButtonAction', methods=['POST'] )
 def likeButton():
      value = request.form['hiddenButtonValue']
-     path=os.getcwd()
-     fullPath=os.path.join(path,'Databases\\LikesCount.txt')
-     countFileR=open(fullPath,'r')
-     count = countFileR.read()
-     countFileR.close()
-
+     
+     fullPath=''
      newCount = 0
      if value =="like":
-        newCount= int(count) + 1
+        path=os.getcwd()
+        fullPath=os.path.join(path,'Databases\\LikeCount.txt')
+        likeFileR=open(fullPath,'r')
+        oldLikeCount = likeFileR.read()
+        likeFileR.close()
+        newCount= int(oldLikeCount) + 1
      elif value=="dislike":
-        newCount= int(count) - 1
-         
-     countFileW = open(fullPath,'w')
-     if newCount == 0:
-         countFileW.write(count)
-     elif newCount != 0:
-         countFileW.write(str(newCount))
+        path=os.getcwd()
+        fullPath=os.path.join(path,'Databases\\DislikeCount.txt')
+        dislikeFileR=open(fullPath,'r')
+        oldDislikeCount = dislikeFileR.read()
+        dislikeFileR.close()
+        newCount= int(oldDislikeCount) + 1
+     
+     if fullPath!='':
+         fileW = open(fullPath,'w')
+         if newCount != 0:
+             fileW.write(str(newCount))
+         fileW.close() 
         
-     countFileW.close() 
-
-     return "",204 
+     return "",204   

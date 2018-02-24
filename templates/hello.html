@@ -106,6 +106,8 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 }
 </style>
 		<script>
+			document
+
 			function openPlot(evt, plot) {
 				// Declare all variables
 				var i, tabcontent, tablinks;
@@ -131,20 +133,22 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 
 			function waitCursor() {
 				document.getElementById("form123").style.cursor = "progress";
-				document.getElementById("hiddenQueryText").value = "fromquery";
+				
 			}
 
 			function likeButtonActions() {
 				document.getElementById("hiddenButton").value = 'like'
 				document.getElementById('likeButtonId').style.visibility = 'hidden';
 				document.getElementById('dislikeButtonId').style.visibility = 'hidden';
-					
+				document.getElementById('likeButtonVisibility').value = 'hidden';
 			}
 
 			function dislikeButtonActions() {
 				document.getElementById("hiddenButton").value = 'dislike'
 				document.getElementById('likeButtonId').style.visibility = 'hidden';
 				document.getElementById('dislikeButtonId').style.visibility = 'hidden';
+				document.getElementById('likeButtonVisibility').value = 'hidden';
+				
 			}
 		</script>
     </head>
@@ -261,8 +265,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	<div class="input submit">
 		<lable for="twitterhandle">Enter Twitter Handle</lable>
 		<input type="text" name="twitterhandle" required/>
-		<!--<input id="hiddenButtonText" type="hidden" name="hiddenButtonValue" />-->
-		<input id="hiddenQueryText" type="hidden" name="hiddenQueryValue" />
+		<input id="likeButtonVisibility" type="hidden" name="likeButtonVisibilityValue" />
 		<button type="submit" class="submitButton" onclick="waitCursor()" >Query</Button>
 	</div>
 	
@@ -271,7 +274,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		<br>
 		<br>
 		<footer>
-			User who find the site useful: {{likesCount}}
+			Users who found the site useful: {{likesCount}}
 			<br />
 			Developed by Nitesh Sharma & Rachit Pabreja (Beta Version)
 			<br />
@@ -280,8 +283,8 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			<!-- D3.js -->
 			<form action="/likeButtonAction" method="post">
 				<div align="right">
-					<button class="likeButton" type="submit" name="DisLikeButton" id="dislikeButtonId" onclick="dislikeButtonActions()" style="background-color:salmon;">Dislike</button>
-					<button class="likeButton" type="submit" name="likeButton" id="likeButtonId" onclick="likeButtonActions()" style="background-color:mediumseagreen;margin-right:5px">Like</button>
+					<button class="likeButton" type="submit" name="DisLikeButton" id="dislikeButtonId" onclick="dislikeButtonActions()" style="background-color:salmon; visibility:{{buttonVisibility}}">Dislike</button>
+					<button class="likeButton" type="submit" name="likeButton" id="likeButtonId" onclick="likeButtonActions()" style="background-color:mediumseagreen;margin-right:5px; visibility:{{buttonVisibility}}">Like</button>
 					<input id="hiddenButton" type="hidden" name="hiddenButtonValue" />
 					<!--<label align="right" id="likeCountLabel" name="likesCount" style="float:right; font-family:Segoe UI,Arial,sans-serif"></label>-->
 				</div>

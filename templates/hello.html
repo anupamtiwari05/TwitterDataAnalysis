@@ -34,14 +34,20 @@ div.tab button.active {
     background-color: #1DA1F2;
 }
 
-#likeButtonID:hover {
+input:invalid {
+				border: 1px dashed red;
+			}
+
+
+.likeButton:hover {
 				cursor:pointer;
 			}
-#likeButtonID {
+.likeButton{
 				font-family: Segoe UI,Arial,sans-serif;
 				font-size: 15px;
 				float: right;
 				color: white;
+				opacity:10;
 				border-radius: 15px
 			}
 /* Style the tab content */
@@ -126,28 +132,19 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			function waitCursor() {
 				document.getElementById("form123").style.cursor = "progress";
 				document.getElementById("hiddenQueryText").value = "fromquery";
-				if (document.getElementById("likeButtonID").style.backgroundColor == "mediumseagreen") {
-					document.getElementById("hiddenButtonText").value = "UnLike";
-
-				}
-				else {
-					document.getElementById("hiddenButtonText").value = "Like";
-				}
-				
 			}
 
-			function likeBackgroundChange() {
-				if (document.getElementById("likeButtonID").style.backgroundColor == "mediumseagreen") {
-					document.getElementById("likeButtonID").value = "Like";
-					document.getElementById("hiddenButtonText").value = "Like";
+			function likeButtonActions() {
+				document.getElementById("hiddenButton").value = 'like'
+				document.getElementById('likeButtonId').style.visibility = 'hidden';
+				document.getElementById('dislikeButtonId').style.visibility = 'hidden';
 					
-				}
-				else {
-					document.getElementById("likeButtonID").style.backgroundColor = "mediumseagreen";
-					document.getElementById("likeButtonID").value = "UnLike";
-					document.getElementById("hiddenButtonText").value = "UnLike";
-				}
+			}
 
+			function dislikeButtonActions() {
+				document.getElementById("hiddenButton").value = 'dislike'
+				document.getElementById('likeButtonId').style.visibility = 'hidden';
+				document.getElementById('dislikeButtonId').style.visibility = 'hidden';
 			}
 		</script>
     </head>
@@ -263,14 +260,10 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	<br />
 	<div class="input submit">
 		<lable for="twitterhandle">Enter Twitter Handle</lable>
-		<input type="text" name="twitterhandle" />
-		<input id="hiddenButtonText" type="hidden" name="hiddenButtonValue" />
+		<input type="text" name="twitterhandle" required/>
+		<!--<input id="hiddenButtonText" type="hidden" name="hiddenButtonValue" />-->
 		<input id="hiddenQueryText" type="hidden" name="hiddenQueryValue" />
-		<input type="submit" value="Query" class="submitButton" onclick="waitCursor()" />
-		<div>
-			<button type="submit" name="likeButton" id="likeButtonID" onclick="likeBackgroundChange()" style="background-color:{{likeButtonColor}};">{{likeButtonValue}}</button>
-			<label align="right" id="likeCountLabel" name="likesCount" style="float:right; font-family:Segoe UI,Arial,sans-serif">{{likesCount}}</label>
-		</div>
+		<button type="submit" class="submitButton" onclick="waitCursor()" >Query</Button>
 	</div>
 	
 </form>
@@ -278,12 +271,21 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		<br>
 		<br>
 		<footer>
+			User who find the site useful: {{likesCount}}
+			<br />
 			Developed by Nitesh Sharma & Rachit Pabreja (Beta Version)
 			<br />
 			Contributors: Dr. Vijay Atluri & Ussama Yakub
-			<!--<button name="likeButton" id="likeButtonID" onclick="likeBackgroundChange()" style="background-color: {{likeButtonColor}};">{{likeButtonValue}}</button>
-			<label align="right" id="likeCountLabel" name="likesCount" style="float:right;font-family:Segoe UI,Arial,sans-serif">{{likesCount}}</label>-->
+
 			<!-- D3.js -->
+			<form action="/likeButtonAction" method="post">
+				<div align="right">
+					<button class="likeButton" type="submit" name="DisLikeButton" id="dislikeButtonId" onclick="dislikeButtonActions()" style="background-color:salmon;">Dislike</button>
+					<button class="likeButton" type="submit" name="likeButton" id="likeButtonId" onclick="likeButtonActions()" style="background-color:mediumseagreen;margin-right:5px">Like</button>
+					<input id="hiddenButton" type="hidden" name="hiddenButtonValue" />
+					<!--<label align="right" id="likeCountLabel" name="likesCount" style="float:right; font-family:Segoe UI,Arial,sans-serif"></label>-->
+				</div>
+			</form>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
 			<!-- jQuery -->
 			<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>

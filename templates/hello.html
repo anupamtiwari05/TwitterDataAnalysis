@@ -276,17 +276,16 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		<footer>
 			Users who found the site useful: {{likesCount}}
 			<br />
+			<br />
 			Developed by Nitesh Sharma & Rachit Pabreja (Beta Version)
 			<br />
 			Contributors: Dr. Vijay Atluri & Ussama Yakub
-
 			<!-- D3.js -->
 			<form action="/likeButtonAction" method="post">
 				<div align="right">
 					<button class="likeButton" type="submit" name="DisLikeButton" id="dislikeButtonId" onclick="dislikeButtonActions()" style="background-color:salmon; visibility:{{buttonVisibility}}">Dislike</button>
 					<button class="likeButton" type="submit" name="likeButton" id="likeButtonId" onclick="likeButtonActions()" style="background-color:mediumseagreen;margin-right:5px; visibility:{{buttonVisibility}}">Like</button>
 					<input id="hiddenButton" type="hidden" name="hiddenButtonValue" />
-					<!--<label align="right" id="likeCountLabel" name="likesCount" style="float:right; font-family:Segoe UI,Arial,sans-serif"></label>-->
 				</div>
 			</form>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>

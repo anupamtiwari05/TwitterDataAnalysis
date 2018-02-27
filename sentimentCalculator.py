@@ -402,7 +402,7 @@ def worldMap(polarity,country_code):
                                 autocolorscale = False, reversescale = True,
                                 marker = dict( line = dict(color = 'rgb(86,81,81)', width = 1)), 
                                 colorbar = dict(title = 'Polarity'))],
-                   layout = dict(title = 'World Map (Polarity)',geo = dict(showframe = True,showcoastlines = True,projection = dict(type = 'Mercator')),
+                   layout = dict(title = 'World Map (Polarity)',geo = dict(showcoastlines = True,projection = dict(type = 'Mercator')),
                                  autosize=False, width=1200, height=700,
                                  margin=dict(l=0,r=10,b=80,t=90,pad=0)))]
     world_map_id = ['World_Map']

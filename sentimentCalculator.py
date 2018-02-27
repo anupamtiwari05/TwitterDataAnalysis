@@ -11,7 +11,7 @@ class tweetsSenti:
     def __init__(self, **kwargs):
         return super().__init__(**kwargs)
 
-    def searchTweets(self, q):
+    def searchTweets(self, q, ct):
         import numpy as np
         import pandas as pd
         import re
@@ -27,7 +27,7 @@ class tweetsSenti:
         oauth = OAuth(ACCESS_TOKEN, ACCESS_SECRET, consumer_key, consumer_secret)
         twitterObj = Twitter(auth=oauth)
         #q = 'modi'
-        count = 100
+        count = int(ct)
        
         try:
             search_results = twitterObj.search.tweets(q=q,count = count)
@@ -39,7 +39,7 @@ class tweetsSenti:
         min_id = min(Original_status_df['id'])
         max_id = max(Original_status_df['id'])
 
-        while len(Original_status_df) < 200:
+        while len(Original_status_df) < count:
             try:
                 search_results = twitterObj.search.tweets(q=q,count=count,max_id = min_id)
                 results = json_normalize(search_results,['statuses'])

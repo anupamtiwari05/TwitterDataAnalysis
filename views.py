@@ -35,7 +35,9 @@ def hello():
     elif request.method=='POST':
         twitterHandle = request.form['twitterhandle']
         buttonVisibility = request.form['likeButtonVisibilityValue']
-        
+        tweetCountDropDown = request.form['tweetCountDropDown']
+
+        #Fetching current likes from database
         path=os.getcwd()
         fullPath=os.path.join(path,'Databases\\LikeCount.txt')
         countFileR=open(fullPath,'r')
@@ -43,7 +45,7 @@ def hello():
         countFileR.close()
 
         obj=tweetsSenti()
-        world_map_string, world_map_ids, us_map_string, us_map_ids, world_tweets_count, world_country_df,country_tweets_count, summary_df_Country, bar_string, bar_ids = obj.searchTweets(twitterHandle)
+        world_map_string, world_map_ids, us_map_string, us_map_ids, world_tweets_count, world_country_df,country_tweets_count, summary_df_Country, bar_string, bar_ids = obj.searchTweets(twitterHandle,tweetCountDropDown)
         if(world_map_string==""):
             return render_template('hello.html', worldPlot = world_map_string, world_map_ids = world_map_ids, usaMapPlot = us_map_string, usa_map_ids = us_map_ids, 
                               world_tweets_count = world_tweets_count, world_country_df = world_country_df,country_tweets_count=country_tweets_count, summary_df_Country = summary_df_Country,

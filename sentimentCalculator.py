@@ -118,7 +118,7 @@ class tweetsSenti:
         world_map_string, world_map_ids = worldMap(world_map['Weighted_Mean_Polarity_Country'], world_map.index)
         us_map_string, us_map_ids = UsMapPlot(UsState_map['Weighted_Mean_Polarity_USA_State'],UsState_map.index)
        
-        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df_world['Total_Tweets_Country'].sum(), summary_df_world.to_html(),summary_df_Country['Total_Tweets_USA_State'].sum(),summary_df_Country.to_html(), bar_string, bar_ids
+        return world_map_string, world_map_ids, us_map_string, us_map_ids, summary_df_world['# Tweets'].sum(), summary_df_world.to_html(justify='justify'),summary_df_Country['# Tweets'].sum(),summary_df_Country.to_html(justify='justify'), bar_string, bar_ids
 
 
 def clean_Tweets(Original_status_df):
@@ -402,7 +402,7 @@ def worldMap(polarity,country_code):
                                 autocolorscale = False, reversescale = True,
                                 marker = dict( line = dict(color = 'rgb(86,81,81)', width = 1)), 
                                 colorbar = dict(title = 'Polarity'))],
-                   layout = dict(title = 'World Map (Polarity)',geo = dict(showcoastlines = True,projection = dict(type = 'Mercator')),
+                   layout = dict(title = 'World Map (Polarity)',geo = dict(showframe = True,showcoastlines = True,projection = dict(type = 'Mercator')),
                                  autosize=False, width=1200, height=700,
                                  margin=dict(l=0,r=10,b=80,t=90,pad=0)))]
     world_map_id = ['World_Map']
@@ -430,6 +430,23 @@ def bar_sentiments(polarity,subjectivity,dates):
     from plotly import plotly
     import simplejson as json
     
+#==============================================================================
+#     trace1 = go.Bar(
+#         x=dates,
+#         y=polarity,
+#         name='Polarity'
+#     )
+#     trace2 = go.Bar(
+#         x=dates,
+#         y=subjectivity,
+#         name='Subjectivity'
+#     )
+#     
+#     data = [trace1, trace2]
+#     layout = go.Layout(
+#         barmode='group'
+#     )
+#==============================================================================
     graphs = [dict(data=[dict(x=dates, y=polarity, type='bar', name='Polarity'),dict(x=dates,y=subjectivity,type='bar',
                     name='Subjectivity'),], layout=dict(autosize=False, width=1800, height=700, margin=dict(l=0,r=10,b=80,t=90,pad=0),showframe = True, title='Bar Plot',barmode='group',bargap=0.10,bargroupgap=0.1))]
     bar_id = ['Bar']
@@ -440,29 +457,30 @@ def dataSummaryWorld(df):
     import pandas as pd
     Country=[]
     total_tweets_Count =[]
-    summary_df = pd.DataFrame(columns=('Country_User','Total_Tweets_Country'))
+    summary_df = pd.DataFrame(columns=('Country','# Tweets'))
     for country in df.Country_User.unique():
         Country.append(country)
         total_tweets_Count.append(int(df[df.Country_User==country]['Total_Tweets_Country'].mean()))
     
-    summary_df['Country_User'] = Country
-    summary_df['Total_Tweets_Country'] = total_tweets_Count
+    summary_df['Country'] = Country
+    summary_df['# Tweets'] = total_tweets_Count
                                   
     #df.groupby(country).mean()
-    summary_df = summary_df.sort_values(by=['Country_User']).reset_index(drop=True)
+    summary_df = summary_df.sort_values(by=['Country']).reset_index(drop=True)
     return summary_df
 
 def dataSummaryCountry(df, countryName):
+    #Check Renaming refactoring
     import pandas as pd
-    columnNameLocation = str(countryName) +'_State_User'
-    columnNameTweets = 'Total_Tweets_' + str(countryName) + '_State'
+    columnNameLocation = str(countryName) +'_State'
+    columnNameTweets = '# Tweets'
     country_state=[]
     total_tweets_count_state =[]
     summary_df_country = pd.DataFrame(columns=(columnNameLocation,columnNameTweets))
-    for state in df[columnNameLocation].unique():
+    for state in df[columnNameLocation+'_User'].unique():
         if(state!= ''):
            country_state.append(state)
-           total_tweets_count_state.append(int(df[df[columnNameLocation]==state][columnNameTweets].mean()))
+           total_tweets_count_state.append(int(df[df[columnNameLocation+'_User']==state]['Total_Tweets_USA_State'].mean()))
     
     summary_df_country[columnNameLocation] = country_state
     summary_df_country[columnNameTweets] = total_tweets_count_state

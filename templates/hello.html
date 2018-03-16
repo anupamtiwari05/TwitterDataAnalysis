@@ -150,6 +150,34 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 				document.getElementById('likeButtonVisibility').value = 'hidden';
 				
 			}
+
+			function SaveFileWorldDf() {
+				worldPlotDf = document.getElementById("worldDf").nextElementSibling
+				var filetype = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+				var tab_text = "<table border='2px'><tr bgcolor='#87AFC6'>";
+
+				for (j = 0; j < worldPlotDf.rows.length; j++) {
+					tab_text = tab_text + worldPlotDf.rows[j].innerHTML + "</tr>";
+					//tab_text=tab_text+"</tr>";
+				}
+				var texttosave = new Blob([tab_text], { type: "application/vnd.ms-excel" })
+				var textToSaveAsURL = window.URL.createObjectURL(texttosave)
+
+				var downloadLink = document.createElement("a");
+				downloadLink.download = "worldMapfile.xls";
+				downloadLink.innerHTML = "Download File";
+				downloadLink.href = textToSaveAsURL;
+				//downloadLink.onclick = destroyClickedElement;
+				downloadLink.style.display = "none";
+				document.body.appendChild(downloadLink);
+
+				downloadLink.click();
+
+			}
+
+			function destroyClickedElement(event) {
+				document.body.removeChild(event.target);
+			}
 		</script>
     </head>
     <body>
@@ -180,9 +208,9 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			<a href="https://nfsharma.weebly.com/">Nitesh Sharma Portfolio</a></h4>
 			<h4 align="right">
 				Guidance By: Dr. Vijay Atluri<br />
-				Director of Master of Information Technology & Analytics,
+				Director of Master of Information Technology & Analytics
 				Rutgers Business School, New Jersey<br />
-				Inspiration : Ussama Yaqub<br />
+				Inspiration : Ussama Yakub<br />
 				PhD student at Rutgers Business School, New Jersey
 			</h4>
 			<div id="About_page"> </div>
@@ -202,15 +230,18 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			Map Plot
 			{% endif %}
 		</h3>
-		<div id="Map_plot"  style="float:left;overflow:auto">
-		</div>
-		<div style="float:left; margin-left: 5px;overflow:auto">
+		<div id="Map_plot"  style="float:left"></div>
+		<div style="float:left; margin-left:2px;overflow:auto">
 			<p>
 				{% if country_tweets_count%}
 				Total tweets: {{country_tweets_count}}
 				{% endif %}
 			</p>
-			<p>{{ summary_df_Country | safe }}</p>
+			<p>
+				{% if country_tweets_count%}
+				{{ summary_df_Country | safe }}
+				{% endif %}
+			</p>
 		</div>
 	</div>
 	<div id="World Map" class="tabcontent" >
@@ -221,19 +252,24 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		</h3>
 		<!--<div id="World_Map_plot" align="justify" style="height:500px; border:1px solid black">-->
 		<div id="World_Map_plot" style="float:left;overflow:auto"></div>
-		<div style="float:left; margin-left: 5px;overflow:auto">
+		<div style="float:left; margin-left: 2px;overflow:auto">
 			<p>{% if country_tweets_count%}
 			Total tweets: {{world_tweets_count}}
 			{% endif %}
 	       </p>
-	       <p>{{ world_country_df | safe }}</p>
+	       <p id="worldDf">{{ world_country_df | safe }}</p>
 		</div>
 		<br />
 		<div style="clear:both" align="center">
-			{% if country_tweets_count%}
+			{% if world_tweets_count%}
 			Polarity identifies the context of a text, +ive or -ive
 			{% endif %}
 		</div>
+		<!--<div align="right">
+			{% if world_tweets_count%}
+			<button class="likeButton" style="background-color:cornflowerblue" type="button" onclick="SaveFileWorldDf()">Export</button>
+			{% endif %}
+		</div>-->
 	</div>		
 <br>     
 <form method="post">
@@ -255,7 +291,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 	<div class="text" >
 		Number of Tweets:
 		<select name="tweetCountDropDown">
-			<option value="100">200</option>
+			<option value="100">50</option>
 			<option value="300">300</option>
 			<option value="500">500</option>
 			<option value="1000">1000</option>
@@ -278,7 +314,7 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 			<br />
 			Developed by Nitesh Sharma & Rachit Pabreja (Beta Version)
 			<br />
-			Contributors: Dr. Vijay Atluri & Ussama Yaqub
+			Contributors: Dr. Vijay Atluri & Ussama Yakub
 
 			<!-- D3.js -->
 			<form action="/likeButtonAction" method="post">

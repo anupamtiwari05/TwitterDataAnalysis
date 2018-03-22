@@ -282,9 +282,14 @@ footer {background: #1DA1F2;color:#fff;border-radius: 25px;}
 		Tweets are successfully retreived. Please check the plots.
 		{%endif%}
 	</div>
-	<div align="center">
+	<div align="center" style="color:red">
 		{% if exception%}
-		Could not retreive tweets from twitter, please enter another twitter handle.
+		Cannot retreive tweets from Twitter :( :(
+		<br />
+		Either the handle does not exist or there are no tweets for this handle
+		<br />
+		<br/>
+		Please try another twitter handle.
 		{%endif%}
 	</div>
 	<br />

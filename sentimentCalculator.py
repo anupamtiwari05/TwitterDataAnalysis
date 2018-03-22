@@ -26,12 +26,15 @@ class tweetsSenti:
         
         oauth = OAuth(ACCESS_TOKEN, ACCESS_SECRET, consumer_key, consumer_secret)
         twitterObj = Twitter(auth=oauth)
-        #q = 'modi'
+        
         count = int(ct)
        
         try:
             search_results = twitterObj.search.tweets(q=q,count = count)
         except TwitterHTTPError:
+            return "","","","","","","","","",""
+        
+        if(search_results['statuses']==[]):
             return "","","","","","","","","",""
 
         Original_status_df = json_normalize(search_results,['statuses'])

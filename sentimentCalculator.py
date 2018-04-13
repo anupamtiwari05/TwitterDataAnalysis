@@ -15,15 +15,17 @@ class tweetsSenti:
         import numpy as np
         import pandas as pd
         import re
+        import os
         from twitter import Twitter, OAuth, TwitterHTTPError
         from pandas.io.json import json_normalize
         from pycountry import countries
         
-        ACCESS_TOKEN = '136600388-9iihe7SFq8nZUOL5GjxoZlPbxW2MYcScWlZ6sD3a'
-        ACCESS_SECRET = 'ScmAR4iYHCxuPHhYMifirTK0h2Jhdqt1p10uoz9lHTshT'
-        consumer_key = 'bto0MsRvjjfkrl4QpndjaUneg'
-        consumer_secret = '5zr7Xr9y4AbKgUCuWRmQGaMvizwg48HpVeyjbSZC4j350rIYPF'
-        
+        #Set/save your keys in OS system environment variables so these will remain private to you, and you can freely share your code like below
+        ACCESS_TOKEN = os.environ['Twitter_AccessToken']
+        ACCESS_SECRET = os.environ['Twitter_AccessSecret']
+        consumer_key = os.environ['Twitter_ConsumerKey']
+        consumer_secret = os.environ['Twitter_ConsumerSecret']
+                
         oauth = OAuth(ACCESS_TOKEN, ACCESS_SECRET, consumer_key, consumer_secret)
         twitterObj = Twitter(auth=oauth)
         
